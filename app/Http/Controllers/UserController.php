@@ -162,6 +162,7 @@ class UserController extends BaseController
             $User->username  = $request['username'];
             $User->email     = $request['email'];
             $User->phone     = $request['phone'];
+            $User->type     = $request['type'];
             $User->password  = Hash::make($request['password']);
             $User->avatar    = $filename;
             $User->role_id   = $request['role'];
@@ -262,6 +263,7 @@ class UserController extends BaseController
                 'username' => $request['username'],
                 'email' => $request['email'],
                 'phone' => $request['phone'],
+                'type' => $request['type'],
                 'password' => $pass,
                 'avatar' => $filename,
                 'statut' => $request['statut'],
