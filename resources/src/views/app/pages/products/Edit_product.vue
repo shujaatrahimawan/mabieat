@@ -244,7 +244,7 @@
                   </validation-provider>
                 </b-col>
 
-                <!-- Product Price -->
+                <!-- Product Price
                 <b-col
                   md="6"
                   class="mb-2"
@@ -269,8 +269,113 @@
                       >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>
                   </validation-provider>
+                </b-col> -->
+  <!-- Product Retail Price Percentage-->
+  <b-col
+                  md="6"
+                  class="mb-2"
+                  v-if="product.type == 'is_single' "
+                >
+                  <validation-provider
+                    name=" Product Retail Price Percentage"
+                    :rules="{ required: true , regex: /^\d*\.?\d*$/}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('Product Retail Price Percentage') + ' ' + '*'">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="ProductPrice-feedback"
+                        label="Price"
+                        :placeholder="$t('Enter_Product_Price')"
+                        v-model=" product.retail_price_percentage"
+                      ></b-form-input>
+
+                      <b-form-invalid-feedback
+                        id="ProductPrice-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+                    <!-- Retail Product  Price -->
+                    <b-col
+                  md="6"
+                  class="mb-2"
+                  v-if="product.type == 'is_single' || product.type == 'is_service'"
+                >
+                  <validation-provider
+                    name="Product Price"
+                    :rules="{ required: true , regex: /^\d*\.?\d*$/}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('Retail Product Price') + ' ' + '*'">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="ProductPrice-feedback"
+                        label="Price"
+                        :placeholder="$t('Enter_Product_Price')"
+                        v-model="product.price"
+                      ></b-form-input>
+
+                      <b-form-invalid-feedback
+                        id="ProductPrice-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+                
+                    <!-- Product Wholesale Price Percentage -->
+                    <b-col
+                  md="6"
+                  class="mb-2"
+                  v-if="product.type == 'is_single' "
+                >
+                  <validation-provider
+                    name="Product Wholesale Price Percentag"
+                    :rules="{ required: true , regex: /^\d*\.?\d*$/}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('Product Wholesale Price Percentage') + ' ' + '*'">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="ProductPrice-feedback"
+                        label="Price"
+                        :placeholder="$t('Enter_Product_Price')"
+                        v-model="product.wholesale_price_percentage"
+                      ></b-form-input>
+
+                      <b-form-invalid-feedback
+                        id="ProductPrice-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
                 </b-col>
 
+                    <!-- Product Wholesale Price  -->
+                    <b-col
+                  md="6"
+                  class="mb-2"
+                  v-if="product.type == 'is_single' || product.type == 'is_service'"
+                >
+                  <validation-provider
+                    name="Product Wholesale Price"
+                    :rules="{ required: true , regex: /^\d*\.?\d*$/}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('Product Wholesale Price') + ' ' + '*'">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="ProductPrice-feedback"
+                        label="Price"
+                        :placeholder="$t('Enter_Product_Price')"
+                        v-model="product.wholesale_price"
+                      ></b-form-input>
+
+                      <b-form-invalid-feedback
+                        id="ProductPrice-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
                 <!-- Unit Product -->
                 <b-col md="6" class="mb-2" v-if="product.type != 'is_service'">
                   <validation-provider name="Unit Product" :rules="{ required: true}">
@@ -374,7 +479,7 @@
                   </div>
                 </div>
 
-                <div class="col-md-9 mb-2" v-if="product.type == 'is_variant'">
+                <div class="col-md-12 mb-2" v-if="product.type == 'is_variant'">
                   <div class="table-responsive">
                     <table class="table table-hover table-sm">
                       <thead class="bg-gray-300">
@@ -382,7 +487,10 @@
                           <th scope="col">{{$t('Variant_code')}}</th>
                           <th scope="col">{{$t('Variant_Name')}}</th>
                           <th scope="col">{{$t('Variant_cost')}}</th>
-                          <th scope="col">{{$t('Variant_price')}}</th>
+                          <th>{{$t('Variant_Retail_percentage')}}</th>
+                           <th>{{$t('Retail_price')}}</th>
+                           <th>{{$t('Variant_wholesale_percentage')}}</th>
+                           <th>{{$t('Variant_wholesale_price')}}</th>
                           <th scope="col"></th>
                         </tr>
                       </thead>
@@ -390,7 +498,7 @@
                         <tr v-if="variants.length <=0">
                           <td colspan="3">{{$t('NodataAvailable')}}</td>
                         </tr>
-                        <tr v-for="variant in variants">
+                        <!-- <tr v-for="variant in variants">
                           <td>
                             <input required class="form-control" v-model="variant.code">
                           </td>
@@ -413,7 +521,44 @@
                               <i class="i-Close-Window"></i>
                             </a>
                           </td>
-                        </tr>
+                        </tr> -->
+                    
+                        <tr v-for="(variant) in variants" :key="variant.var_id">
+      <td>
+        <input required class="form-control" v-model="variant.code">
+      </td>
+      <td>
+        <input required class="form-control" v-model="variant.text">
+      </td>
+      <td>
+        <input required class="form-control" 
+               v-model.number="variant.cost"
+               @change="calculateVariantPrices(variant)">
+      </td>
+      <td>
+        <input required class="form-control" 
+               v-model.number="variant.retail_price_percentage"
+               @change="calculateVariantPrices(variant)">
+      </td>
+      <td>
+        <input required class="form-control" v-model="variant.price" readonly>
+      </td>
+      <td>
+        <input required class="form-control" 
+               v-model.number="variant.wholesale_price_percentage"
+               @change="calculateVariantPrices(variant)">
+      </td>
+      <td>
+        <input required class="form-control" v-model="variant.wholesale_price" readonly>
+      </td>
+      <td>
+        <a @click="delete_variant(variant.var_id)" class="btn btn-sm btn-danger">
+          <i class="i-Close-Window"></i>
+        </a>
+      </td>
+    </tr>
+                    
+                    
                       </tbody>
                     </table>
                   </div>
@@ -543,6 +688,9 @@ export default {
         is_variant: false,
         is_imei: false,
         not_selling: false,
+        retail_price_percentage: "",
+        wholesale_price_percentage: "",
+        wholesale_price: "",
       },
       code_exist: ""
     };
@@ -552,9 +700,97 @@ export default {
     VueUploadMultipleImage,
     VueTagsInput
   },
-
+  watch: {
+    "product.retail_price_percentage": function(newValue) {
+      // Recalculate retail price only when retail percentage changes
+      this.calculatePrices();
+    },
+    "product.wholesale_price_percentage": function(newValue) {
+      // Recalculate wholesale price only when wholesale percentage changes
+      this.calculatePrices();
+    },
+    "product.cost": function(newValue) {
+      // Recalculate both prices when cost changes
+      this.calculatePrices();
+    },
+  "product.cost": function(newValue) {
+    this.calculatePrices();
+    // Update all variants' cost if they're empty
+    this.variants.forEach(variant => {
+      if (!variant.cost || variant.cost === 0) {
+        variant.cost = newValue;
+      }
+      this.calculateVariantPrices(variant);
+    });
+  },
+  "product.retail_price_percentage": function(newValue) {
+    this.calculatePrices();
+    // Update all variants' percentage if they're empty
+    this.variants.forEach(variant => {
+      if (!variant.retail_price_percentage || variant.retail_price_percentage === 0) {
+        variant.retail_price_percentage = newValue;
+        this.calculateVariantPrices(variant);
+      }
+    });
+  },
+  "product.wholesale_price_percentage": function(newValue) {
+    this.calculatePrices();
+    // Update all variants' percentage if they're empty
+    this.variants.forEach(variant => {
+      if (!variant.wholesale_price_percentage || variant.wholesale_price_percentage === 0) {
+        variant.wholesale_price_percentage = newValue;
+        this.calculateVariantPrices(variant);
+      }
+    });
+  },
+},
+ 
+ 
   methods: {
+    calculateVariantPrices(variant) {
+    const cost = parseFloat(variant.cost) || 0;
+    
+    // Calculate retail price
+    if (variant.retail_price_percentage !== undefined) {
+      const retailPercentage = parseFloat(variant.retail_price_percentage) || 0;
+      variant.price = (cost + (cost * retailPercentage / 100)).toFixed(2);
+    }
+    
+    // Calculate wholesale price
+    if (variant.wholesale_price_percentage !== undefined) {
+      const wholesalePercentage = parseFloat(variant.wholesale_price_percentage) || 0;
+      variant.wholesale_price = (cost + (cost * wholesalePercentage / 100)).toFixed(2);
+    }
+  },
 
+  calculateAllVariantPrices() {
+    this.variants.forEach(variant => {
+      this.calculateVariantPrices(variant);
+    });
+  },
+  calculatePrices() {
+  try {
+    const cost = parseFloat(this.product.cost) || 0;
+    
+    // Retail price calculation
+    if (this.product.retail_price_percentage !== "" && !isNaN(this.product.retail_price_percentage)) {
+      const retailPercentage = parseFloat(this.product.retail_price_percentage);
+      if (retailPercentage >= 0) { // Ensure percentage is positive
+        this.product.price = (cost + (cost * retailPercentage / 100)).toFixed(2);
+      }
+    }
+
+    // Wholesale price calculation
+    if (this.product.wholesale_price_percentage !== "" && !isNaN(this.product.wholesale_price_percentage)) {
+      const wholesalePercentage = parseFloat(this.product.wholesale_price_percentage);
+      if (wholesalePercentage >= 0) { // Ensure percentage is positive
+        this.product.wholesale_price = (cost + (cost * wholesalePercentage / 100)).toFixed(2);
+      }
+    }
+  } catch (error) {
+    console.error("Error in price calculation:", error);
+  }
+},
      //------ Generate code
      generateNumber() {
       this.code_exist = "";
@@ -599,36 +835,68 @@ export default {
       });
     },
 
-    add_variant(tag) {
-      if (
-        this.variants.length > 0 &&
-        this.variants.some(variant => variant.text === tag)
-      ) {
-         this.makeToast(
-            "warning",
-            this.$t("VariantDuplicate"),
-            this.$t("Warning")
-          );
-      } else {
-          if(this.tag != ''){
-            var variant_tag = {
-              var_id: this.variants.length + 1, // generate unique ID
-              text: tag
-            };
-            this.variants.push(variant_tag);
-            this.tag = "";
-          }else{
+    // add_variant(tag) {
+    //   if (
+    //     this.variants.length > 0 &&
+    //     this.variants.some(variant => variant.text === tag)
+    //   ) {
+    //      this.makeToast(
+    //         "warning",
+    //         this.$t("VariantDuplicate"),
+    //         this.$t("Warning")
+    //       );
+    //   } else {
+    //       if(this.tag != ''){
+    //         var variant_tag = {
+    //           var_id: this.variants.length + 1, // generate unique ID
+    //           text: tag
+    //         };
+    //         this.variants.push(variant_tag);
+    //         this.tag = "";
+    //       }else{
 
-            this.makeToast(
-              "warning",
-              "Please Enter the Variant",
-              this.$t("Warning")
-            );
+    //         this.makeToast(
+    //           "warning",
+    //           "Please Enter the Variant",
+    //           this.$t("Warning")
+    //         );
             
-          }
-      }
-    },
+    //       }
+    //   }
+    // },
+   
+    add_variant(tag) {
+  if (
+    this.variants.length > 0 &&
+    this.variants.some(variant => variant.text === tag)
+  ) {
+    this.makeToast("warning", this.$t("VariantDuplicate"), this.$t("Warning"));
+  } else {
+    if (this.tag !== '') {
+      const cost = parseFloat(this.product.cost) || 0;
+      const retailPercentage = parseFloat(this.product.retail_price_percentage) || 0;
+      const wholesalePercentage = parseFloat(this.product.wholesale_price_percentage) || 0;
+
+      const variant = {
+        var_id: this.variants.length + 1,
+        text: tag,
+        code: '',
+        cost,
+        retail_price_percentage: retailPercentage,
+        wholesale_price_percentage: wholesalePercentage,
+        price: (cost + (cost * retailPercentage / 100)).toFixed(2),
+        wholesale_price: (cost + (cost * wholesalePercentage / 100)).toFixed(2),
+      };
+
+      this.variants.push(variant);
+      this.tag = "";
+    } else {
+      this.makeToast("warning", "Please Enter the Variant", this.$t("Warning"));
+    }
+  }
+},
     //-----------------------------------Delete variant------------------------------\\
+   
     delete_variant(var_id) {
       for (var i = 0; i < this.variants.length; i++) {
         if (var_id === this.variants[i].var_id) {
