@@ -185,8 +185,8 @@ class ProductsController extends BaseController
                 'cost'         => Rule::requiredIf($request->type == 'is_single'),
                 'price'        => Rule::requiredIf($request->type != 'is_variant'),
                 'wholesale_price'  => Rule::requiredIf($request->type != 'is_variant'),
-                'wholesale_price_percentage'  => Rule::requiredIf($request->type != 'is_variant'),
-                'retail_price_percentage'  => Rule::requiredIf($request->type != 'is_variant'),
+                'wholesale_price_percentage'  => Rule::requiredIf($request->type != 'is_service'),
+                'retail_price_percentage'  => Rule::requiredIf($request->type != 'is_service'),
             ];
 
 
@@ -497,6 +497,8 @@ class ProductsController extends BaseController
                 'unit_id'     => Rule::requiredIf($request->type != 'is_service'),
                 'cost'        => Rule::requiredIf($request->type == 'is_single'),
                 'price'       => Rule::requiredIf($request->type != 'is_variant'),
+                'wholesale_price_percentage'  => Rule::requiredIf($request->type != 'is_service'),
+                'retail_price_percentage'  => Rule::requiredIf($request->type != 'is_service'),
             ];
 
 
