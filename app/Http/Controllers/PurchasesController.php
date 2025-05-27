@@ -173,6 +173,7 @@ class PurchasesController extends BaseController
 
     public function store(Request $request)
     {
+
         $this->authorizeForUser($request->user('api'), 'create', Purchase::class);
 
         request()->validate([
@@ -216,6 +217,48 @@ class PurchasesController extends BaseController
                     'total' => $value['subtotal'],
                     'imei_number' => $value['imei_number'],
                 ];
+
+                   // Update product or product variant prices
+            $updateData = [
+                'retail_price_percentage' => $value['retail_price_percentage'],
+                'wholesale_price_percentage' => $value['wholesale_price_percentage'],
+                'wholesale_price' => $value['wholesale_price'],
+                'cost' => $value['Unit_cost'],
+                'price' => $value['retail_price'], // price is retail_price
+            ];
+
+            if ($value['product_variant_id'] !== null) {
+                // Update product variant
+                $product_variant = ProductVariant::where('id', $value['product_variant_id'])
+                    ->where('product_id', $value['product_id'])
+                    ->first();
+
+                if ($product_variant) {
+                    $product_variant->update($updateData);
+                }
+            } else {
+                // Update main product
+                $product = Product::where('id', $value['product_id'])->first();
+                if ($product) {
+                    $product->update($updateData);
+                }
+            }
+
+            //        if ($value['product_variant_id'] !== null) {
+            //     $product_variant = ProductVariant::where('id', $value['product_variant_id'])
+            //         ->where('product_id', $value['product_id'])
+            //         ->first();
+
+            //     if ($product_variant) {
+            //         $product_variant->update([
+            //             'retail_price_percentage' => $value['retail_price_percentage'],
+            //             'wholesale_price_percentage' => $value['wholesale_price_percentage'],
+            //             'wholesale_price' => $value['wholesale_price'],
+            //             'cost' => $value['Unit_cost'],
+            //             'price' => $value['retail_price'],
+            //         ]);
+            //     }
+            // }
 
                 if ($order->statut == "received") {
                     if ($value['product_variant_id'] !== null) {
@@ -1090,6 +1133,7 @@ class PurchasesController extends BaseController
     public function get_Products_by_purchase(Request $request , $id)
     {
 
+        d("annas");
         $this->authorizeForUser($request->user('api'), 'create', PurchaseReturn::class);
         $role = Auth::user()->roles()->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');

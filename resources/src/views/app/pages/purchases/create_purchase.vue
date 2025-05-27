@@ -94,6 +94,12 @@
                           <th scope="col">#</th>
                           <th scope="col">{{$t('ProductName')}}</th>
                           <th scope="col">{{$t('Net_Unit_Cost')}}</th>
+                          <th scope="col">{{$t('Wholesale_Price_Percentage')}}</th>
+
+                          <th scope="col">{{$t('Wholesale_Price')}}</th>
+  <th scope="col">{{$t('Retail_Price_Percentage')}}</th>
+
+  <th scope="col">{{$t('Retail_Price')}}</th>
                           <th scope="col">{{$t('Current_stock')}}</th>
                           <th scope="col">{{$t('Qty')}}</th>
                           <th scope="col">{{$t('Discount')}}</th>
@@ -116,10 +122,16 @@
                             <span class="badge badge-success">{{detail.name}}</span>
                             
                           </td>
-                          <td
-                          >{{currentUser.currency}} {{formatNumber(detail.Net_cost, 3)}}</td>
-                          <td>
-                            <span
+                          <td>{{currentUser.currency}} {{formatNumber(detail.Net_cost, 3)}}</td>
+                          <td>{{currentUser.currency}} {{formatNumber(detail.wholesale_price_percentage, 3)}}</td>
+
+                            <td>{{currentUser.currency}} {{formatNumber(detail.wholesale_price, 3)}}</td>
+<td>{{formatNumber(detail.retail_price_percentage, 2)}}%</td>
+
+<td>{{currentUser.currency}} {{formatNumber(detail.retail_price, 3)}}</td>
+<td>
+                           
+<span
                               class="badge badge-outline-warning"
                             >{{detail.stock}} {{detail.unitPurchase}}</span>
                           </td>
@@ -150,6 +162,7 @@
                           <td>{{currentUser.currency}} {{formatNumber(detail.DiscountNet * detail.quantity, 2)}}</td>
                           <td>{{currentUser.currency}} {{formatNumber(detail.taxe * detail.quantity, 2)}}</td>
                           <td>{{currentUser.currency}} {{detail.subtotal.toFixed(2)}}</td>
+
                           <td>
                             <i v-if="currentUserPermissions && currentUserPermissions.includes('edit_product_purchase')"
                              @click="Modal_Updat_Detail(detail)" class="i-Edit text-25 text-success"></i>
@@ -311,7 +324,7 @@
         </b-row>
       </b-form>
     </validation-observer>
-
+<!-- thismodel -->
     <!-- Show Modal Update Detail Product -->
     <validation-observer ref="Update_Detail_purchase">
       <b-modal hide-footer size="lg" id="form_Update_Detail" :title="detail.name">
@@ -325,16 +338,63 @@
                 v-slot="validationContext"
               >
                 <b-form-group :label="$t('ProductCost') + ' ' + '*'" id="cost-input">
-                  <b-form-input
-                    label="Product Cost"
-                    v-model.number="detail.Unit_cost"
-                    :state="getValidationState(validationContext)"
-                    aria-describedby="cost-feedback"
-                  ></b-form-input>
+<b-form-input
+  v-model.number="detail.Unit_cost"
+  @change="handleCostInput($event)"
+></b-form-input>
+
                   <b-form-invalid-feedback id="cost-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                 </b-form-group>
               </validation-provider>
             </b-col>
+<!--  Add these fields to your update detail modal form -->
+<b-col lg="6" md="6" sm="12">
+  <validation-provider name="Wholesale Percentage" :rules="{ regex: /^\d*\.?\d*$/}">
+    <b-form-group :label="$t('Wholesale_Price_Percentage')">
+      <b-form-input
+        v-model.number="wholesalePercentage"
+        :placeholder="$t('Wholesale_Price_Percentage')"
+      ></b-form-input>
+    </b-form-group>
+  </validation-provider>
+</b-col>
+<b-col lg="6" md="6" sm="12">
+  <validation-provider name="Wholesale Price" :rules="{ regex: /^\d*\.?\d*$/}">
+    <b-form-group :label="$t('Wholesale_Price')">
+<b-form-input
+  v-model.number="detail.wholesale_price"
+  @change="updateWholesalePercentage"
+></b-form-input>
+    </b-form-group>
+  </validation-provider>
+</b-col>
+
+
+
+<b-col lg="6" md="6" sm="12">
+  <validation-provider name="Retail Percentage" :rules="{ regex: /^\d*\.?\d*$/}">
+    <b-form-group :label="$t('Retail_Price_Percentage')">
+      <b-input-group append="%">
+        <b-form-input
+          v-model.number="retailPercentage"
+          :placeholder="$t('Retail_Price_Percentage')"
+        ></b-form-input>
+      </b-input-group>
+    </b-form-group>
+  </validation-provider>
+</b-col> 
+
+
+<b-col lg="6" md="6" sm="12">
+  <validation-provider name="Retail Price" :rules="{ regex: /^\d*\.?\d*$/}">
+    <b-form-group :label="$t('Retail_Price')">
+<b-form-input
+  v-model.number="detail.retail_price"
+  @change="updateRetailPercentage"
+></b-form-input>
+    </b-form-group>
+  </validation-provider>
+</b-col>
 
             <!-- Tax Method -->
              <b-col lg="6" md="6" sm="12">
@@ -488,11 +548,16 @@ export default {
       detail: {
         quantity: "",
         discount: "",
-        Unit_cost: "",
         discount_Method: "",
         tax_percent: "",
         tax_method: "",
         imei_number:"",
+          Unit_cost: 0, // Initialize with default value
+      wholesale_price: 0,
+      wholesale_Percentage: 0,
+      retail_price: 0,
+      retail_price_percentage: 0,
+        
       },
       purchases: [],
       purchase: {
@@ -534,14 +599,108 @@ export default {
         product_variant_id: "",
         is_imei: "",
         imei_number:"",
+        wholesale_price: "",
+        wholesale_price_percentage: "",
+  retail_price: "",
+  retail_price_percentage: "",
       }
     };
   },
+  watch: {
+   detail: {
+    handler(newVal) {
+
+    },
+    deep: true,
+    immediate: true
+  },
+  'detail.Unit_cost'(newVal) {
+    this.updatePricesFromCost();
+  }
+
+},
   computed: {
-    ...mapGetters(["currentUserPermissions","currentUser"])
+    ...mapGetters(["currentUserPermissions","currentUser"]),
+
+    wholesalePercentage: {
+    get() {
+      return this.detail.wholesale_Percentage;
+    },
+    set(value) {
+      this.detail.wholesale_Percentage = value;
+      if (this.detail.Unit_cost && !isNaN(value)) {
+        this.detail.wholesale_price = 
+          parseFloat(this.detail.Unit_cost) + (parseFloat(this.detail.Unit_cost) * value / 100);
+      }
+    }
+  },
+  wholesalePrice: {
+    get() {
+      return this.detail.wholesale_price;
+    },
+    set(value) {
+      this.detail.wholesale_price = value;
+      if (this.detail.Unit_cost && !isNaN(value)) {
+        this.detail.wholesale_Percentage = 
+          ((value - parseFloat(this.detail.Unit_cost)) / parseFloat(this.detail.Unit_cost)) * 100;
+      }
+    }
+  },
+  retailPercentage: {
+    get() {
+      return this.detail.retail_price_percentage;
+    },
+    set(value) {
+      this.detail.retail_price_percentage = value;
+      if (this.detail.Unit_cost && !isNaN(value)) {
+        this.detail.retail_price = 
+          parseFloat(this.detail.Unit_cost) + (parseFloat(this.detail.Unit_cost) * value / 100);
+      }
+    }
+  },
+  retailPrice: {
+    get() {
+      return this.detail.retail_price;
+    },
+    set(value) {
+      this.detail.retail_price = value;
+      if (this.detail.Unit_cost && !isNaN(value)) {
+        this.detail.retail_price_percentage = 
+          ((value - parseFloat(this.detail.Unit_cost)) / parseFloat(this.detail.Unit_cost)) * 100;
+      }
+    }
+  }
   },
 
+
   methods: {
+
+   handleCostInput(value) {
+
+  this.detail = {
+    ...this.detail,
+    Unit_cost: Number(value) || 0
+  };
+  this.updatePricesFromCost();
+},
+ updatePricesFromCost() {
+  this.$nextTick(() => {
+    this.updateWholesalePrice();
+    this.updateRetailPrice();
+  });
+},
+updateWholesalePrice() {
+  if (this.detail.Unit_cost != null && this.detail.wholesale_Percentage != null) {
+    const newPrice = this.detail.Unit_cost * (1 + this.detail.wholesale_Percentage / 100);
+    this.$set(this.detail, 'wholesale_price', parseFloat(newPrice.toFixed(2)));
+  }
+},
+updateRetailPrice() {
+  if (this.detail.Unit_cost != null && this.detail.retail_price_percentage != null) {
+    const newPrice = this.detail.Unit_cost * (1 + this.detail.retail_price_percentage / 100);
+    this.$set(this.detail, 'retail_price', parseFloat(newPrice.toFixed(2)));
+  }
+},
 
     //--- Submit Validate Create Purchase
     Submit_Purchase() {
@@ -598,7 +757,11 @@ export default {
       this.get_units(detail.product_id);
       this.detail.detail_id = detail.detail_id;
       this.detail.purchase_unit_id = detail.purchase_unit_id;
-      this.detail.Unit_cost = detail.Unit_cost;
+      this.detail.Unit_cost = detail.Net_cost;
+      this.detail.wholesale_price = detail.wholesale_price;
+      this.detail.wholesale_Percentage = detail.wholesale_price_percentage;
+      this.detail.retail_price = detail.retail_price;
+      this.detail.retail_price_percentage = detail.retail_price_percentage;
       this.detail.tax_method = detail.tax_method;
       this.detail.fix_cost = detail.fix_cost;
       this.detail.fix_stock = detail.fix_stock;
@@ -638,7 +801,7 @@ export default {
                 }
               }
             }
-                      
+              
           this.details[i].Unit_cost = this.detail.Unit_cost;
           this.details[i].tax_percent = this.detail.tax_percent;
           this.details[i].tax_method = this.detail.tax_method;
@@ -646,7 +809,11 @@ export default {
           this.details[i].discount = this.detail.discount;
           this.details[i].purchase_unit_id = this.detail.purchase_unit_id;
           this.details[i].imei_number = this.detail.imei_number;
-
+      this.details[i].retail_price = this.detail.retail_price;
+      this.details[i].retail_price_percentage = this.detail.retail_price_percentage;
+             this.details[i].wholesale_price = this.detail.wholesale_price;
+      this.details[i].wholesale_price_percentage = this.detail.wholesale_Percentage;
+       
           if (this.details[i].discount_Method == "2") {
             //Fixed
             this.details[i].DiscountNet = this.details[i].discount;
@@ -1021,13 +1188,14 @@ export default {
 
     Get_Product_Details(product_id, variant_id) {
       axios.get("/show_product_data/" + product_id +"/"+ variant_id).then(response => {
+        const data = response.data;
         this.product.discount = 0;
         this.product.DiscountNet = 0;
         this.product.discount_Method = "2";
         this.product.product_id = response.data.id;
         this.product.name = response.data.name;
         this.product.Net_cost = response.data.Net_cost;
-        this.product.Unit_cost = response.data.Unit_cost;
+        // this.product.Unit_cost = response.data.Unit_cost;
         this.product.taxe = response.data.tax_cost;
         this.product.tax_method = response.data.tax_method;
         this.product.tax_percent = response.data.tax_percent;
@@ -1036,6 +1204,12 @@ export default {
         this.product.purchase_unit_id = response.data.purchase_unit_id;
         this.product.is_imei = response.data.is_imei;
         this.product.imei_number = '';
+        
+        this.product.wholesale_price_percentage = response.data.wholesale_price_percentage || 0;
+
+        this.product.wholesale_price = response.data.wholesale_price || 0;
+    this.product.retail_price = response.data.Unit_price || 0;
+    this.product.retail_price_percentage = response.data.retail_price_percentage || 0;
         this.add_product();
         this.Calcul_Total();
       });

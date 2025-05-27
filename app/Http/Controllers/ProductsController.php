@@ -1237,134 +1237,298 @@ class ProductsController extends BaseController
     
     
     //------------ Get product By ID -----------------\\
-    public function show_product_data($id , $variant_id)
-    {
+//     public function show_product_data($id , $variant_id)
+//     {
+// // dd($Product_data);
 
-        $Product_data = Product::with('unit')
-            ->where('id', $id)
-            ->where('deleted_at', '=', null)
-            ->first();
+//         $Product_data = Product::with('unit')
+//             ->where('id', $id)
+//             ->where('deleted_at', '=', null)
+//             ->first();
 
-        $data = [];
-        $item['id']           = $Product_data['id'];
-        $item['image']        = $Product_data['image'];
-        $item['product_type'] = $Product_data['type'];
-        $item['Type_barcode'] = $Product_data['Type_barcode'];
+//         $data = [];
+//         $item['id']           = $Product_data['id'];
+//         $item['image']        = $Product_data['image'];
+//         $item['product_type'] = $Product_data['type'];
+//         $item['Type_barcode'] = $Product_data['Type_barcode'];
 
-        $item['unit_id'] = $Product_data['unit']?$Product_data['unit']->id:'';
-        $item['unit']    = $Product_data['unit']?$Product_data['unit']->ShortName:'';
+//         $item['unit_id'] = $Product_data['unit']?$Product_data['unit']->id:'';
+//         $item['unit']    = $Product_data['unit']?$Product_data['unit']->ShortName:'';
 
-        $item['purchase_unit_id'] = $Product_data['unitPurchase']?$Product_data['unitPurchase']->id:'';
-        $item['unitPurchase']     = $Product_data['unitPurchase']?$Product_data['unitPurchase']->ShortName:'';
+//         $item['purchase_unit_id'] = $Product_data['unitPurchase']?$Product_data['unitPurchase']->id:'';
+//         $item['unitPurchase']     = $Product_data['unitPurchase']?$Product_data['unitPurchase']->ShortName:'';
 
-        $item['sale_unit_id'] = $Product_data['unitSale']?$Product_data['unitSale']->id:'';
-        $item['unitSale']     = $Product_data['unitSale']?$Product_data['unitSale']->ShortName:'';
+//         $item['sale_unit_id'] = $Product_data['unitSale']?$Product_data['unitSale']->id:'';
+//         $item['unitSale']     = $Product_data['unitSale']?$Product_data['unitSale']->ShortName:'';
 
-        $item['tax_method']  = $Product_data['tax_method'];
-        $item['tax_percent'] = $Product_data['TaxNet'];
+//         $item['tax_method']  = $Product_data['tax_method'];
+//         $item['tax_percent'] = $Product_data['TaxNet'];
 
-        $item['is_imei']     = $Product_data['is_imei'];
-        $item['not_selling'] = $Product_data['not_selling'];
+//         $item['is_imei']     = $Product_data['is_imei'];
+//         $item['not_selling'] = $Product_data['not_selling'];
 
-        //product single
-        if($Product_data['type'] == 'is_single'){
-            $product_price = $Product_data['price'];
-            $product_cost  = $Product_data['cost'];
+//         //product single
+//         if($Product_data['type'] == 'is_single'){
+//             $product_price = $Product_data['price'];
+//             $product_cost  = $Product_data['cost'];
+//             $product_retail_price_percentage  = $Product_data['retail_price_percentage'];
+//             $product_wholesale_price_percentage = $Product_data['wholesale_price_percentage'];
+//             $product_wholesale_price  = $Product_data['wholesale_price'];
 
-            $item['code'] = $Product_data['code'];
-            $item['name'] = $Product_data['name'];
 
-        //product is_variant
-        }elseif($Product_data['type'] == 'is_variant'){
+//             $item['code'] = $Product_data['code'];
+//             $item['name'] = $Product_data['name'];
 
-            $product_variant_data = ProductVariant::where('product_id', $id)
-            ->where('id', $variant_id)->first();
+//         //product is_variant
+//         }elseif($Product_data['type'] == 'is_variant'){
 
-            $product_price = $product_variant_data['price'];
-            $product_cost  = $product_variant_data['cost'];
-            $item['code'] = $product_variant_data['code'];
-            $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
+//             $product_variant_data = ProductVariant::where('product_id', $id)
+//             ->where('id', $variant_id)->first();
 
-         //product is_service
-        }else{
+//             $product_price = $product_variant_data['price'];
+//             $product_cost  = $product_variant_data['cost'];
+//             $product_retail_price_percentage  = $product_variant_data['retail_price_percentage'];
+//             $product_wholesale_price_percentage  = $product_variant_data['wholesale_price_percentage'];
+//             $product_wholesale_price  = $product_variant_data['wholesale_price'];
+//             $item['code'] = $product_variant_data['code'];
+//             $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
 
-            $product_price = $Product_data['price'];
-            $product_cost  = 0;
+//          //product is_service
+//         }else{
 
-            $item['code'] = $Product_data['code'];
-            $item['name'] = $Product_data['name'];
-        }
+//             $product_price = $Product_data['price'];
+//             $product_cost  = 0;
+
+//             $item['code'] = $Product_data['code'];
+//             $item['name'] = $Product_data['name'];
+//         }
 
        
-        //check if product has Unit sale
-        if ($Product_data['unitSale']) {
+//         //check if product has Unit sale
+//         if ($Product_data['unitSale']) {
 
-            if ($Product_data['unitSale']->operator == '/') {
-                $price = $product_price / $Product_data['unitSale']->operator_value;
+//             if ($Product_data['unitSale']->operator == '/') {
+//                 $price = $product_price / $Product_data['unitSale']->operator_value;
 
-            } else {
-                $price = $product_price * $Product_data['unitSale']->operator_value;
-            }
+//             } else {
+//                 $price = $product_price * $Product_data['unitSale']->operator_value;
+//             }
 
-        }else{
-            $price = $product_price;
+//         }else{
+//             $price = $product_price;
+//         }
+
+//         //check if product has Unit Purchase
+
+//         if ($Product_data['unitPurchase']) {
+
+//             if ($Product_data['unitPurchase']->operator == '/') {
+//                 $cost = $product_cost / $Product_data['unitPurchase']->operator_value;
+//             } else {
+//                 $cost = $product_cost * $Product_data['unitPurchase']->operator_value;
+//             }
+
+//         }else{
+//             $cost = 0;
+//         }
+
+//         $item['Unit_cost'] = $cost;
+//         $item['fix_cost'] = $product_cost;
+//         $item['Unit_price'] = $price;
+//         $item['fix_price'] = $product_price;
+
+//         if ($Product_data->TaxNet !== 0.0) {
+//             //Exclusive
+//             if ($Product_data['tax_method'] == '1') {
+//                 $tax_price = $price * $Product_data['TaxNet'] / 100;
+//                 $tax_cost = $cost * $Product_data['TaxNet'] / 100;
+
+//                 $item['Total_cost'] = $cost + $tax_cost;
+//                 $item['Total_price'] = $price + $tax_price;
+//                 $item['Net_cost'] = $cost;
+//                 $item['Net_price'] = $price;
+//                 $item['tax_price'] = $tax_price;
+//                 $item['tax_cost'] = $tax_cost;
+
+//                 // Inxclusive
+//             } else {
+//                 $item['Total_cost'] = $cost;
+//                 $item['Total_price'] = $price;
+//                 $item['Net_cost'] = $cost / (($Product_data['TaxNet'] / 100) + 1);
+//                 $item['Net_price'] = $price / (($Product_data['TaxNet'] / 100) + 1);
+//                 $item['tax_cost'] = $item['Total_cost'] - $item['Net_cost'];
+//                 $item['tax_price'] = $item['Total_price'] - $item['Net_price'];
+//             }
+//         } else {
+//             $item['Total_cost'] = $cost;
+//             $item['Total_price'] = $price;
+//             $item['Net_cost'] = $cost;
+//             $item['Net_price'] = $price;
+//             $item['tax_price'] = 0;
+//             $item['tax_cost'] = 0;
+//         }
+
+//         $data[] = $item;
+
+//         return response()->json($data[0]);
+//     }
+public function show_product_data($id, $variant_id)
+{
+    $Product_data = Product::with('unit')
+        ->where('id', $id)
+        ->where('deleted_at', '=', null)
+        ->first();
+
+    $data = [];
+    $item['id']           = $Product_data['id'];
+    $item['image']        = $Product_data['image'];
+    $item['product_type'] = $Product_data['type'];
+    $item['Type_barcode'] = $Product_data['Type_barcode'];
+
+    $item['unit_id'] = $Product_data['unit']?$Product_data['unit']->id:'';
+    $item['unit']    = $Product_data['unit']?$Product_data['unit']->ShortName:'';
+
+    $item['purchase_unit_id'] = $Product_data['unitPurchase']?$Product_data['unitPurchase']->id:'';
+    $item['unitPurchase']     = $Product_data['unitPurchase']?$Product_data['unitPurchase']->ShortName:'';
+
+    $item['sale_unit_id'] = $Product_data['unitSale']?$Product_data['unitSale']->id:'';
+    $item['unitSale']     = $Product_data['unitSale']?$Product_data['unitSale']->ShortName:'';
+
+    $item['tax_method']  = $Product_data['tax_method'];
+    $item['tax_percent'] = $Product_data['TaxNet'];
+
+    $item['is_imei']     = $Product_data['is_imei'];
+    $item['not_selling'] = $Product_data['not_selling'];
+
+    // Initialize the new fields
+    $item['wholesale_price'] = 0;
+    $item['retail_price'] = 0;
+    $item['retail_price_percentage'] = 0;
+    $item['wholesale_price_percentage'] = 0;
+
+    //product single
+    if($Product_data['type'] == 'is_single'){
+        $product_price = $Product_data['price'];
+        $product_cost  = $Product_data['cost'];
+        
+        // Add the new pricing fields for single product
+        $item['wholesale_price'] = $Product_data['wholesale_price'] ?? 0;
+        $item['retail_price'] = $Product_data['retail_price'] ?? 0;
+        $item['retail_price_percentage'] = $Product_data['retail_price_percentage'] ?? 0;
+        $item['wholesale_price_percentage'] = $Product_data['wholesale_price_percentage'] ?? 0;
+
+        $item['code'] = $Product_data['code'];
+        $item['name'] = $Product_data['name'];
+
+    //product is_variant
+    } elseif($Product_data['type'] == 'is_variant') {
+        $product_variant_data = ProductVariant::where('product_id', $id)
+            ->where('id', $variant_id)->first();
+
+        $product_price = $product_variant_data['price'];
+        $product_cost  = $product_variant_data['cost'];
+        
+        // Add the new pricing fields for variant product
+        $item['wholesale_price'] = $product_variant_data['wholesale_price'] ?? 0;
+        $item['retail_price'] = $product_variant_data['retail_price'] ?? 0;
+        $item['retail_price_percentage'] = $product_variant_data['retail_price_percentage'] ?? 0;
+        $item['wholesale_price_percentage'] = $product_variant_data['wholesale_price_percentage'] ?? 0;
+
+        $item['code'] = $product_variant_data['code'];
+        $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
+
+    //product is_service
+    } else {
+        $product_price = $Product_data['price'];
+        $product_cost  = 0;
+        
+        // Add the new pricing fields for service product
+        $item['wholesale_price'] = $Product_data['wholesale_price'] ?? 0;
+        $item['retail_price'] = $Product_data['retail_price'] ?? 0;
+        $item['retail_price_percentage'] = $Product_data['retail_price_percentage'] ?? 0;
+        $item['wholesale_price_percentage'] = $Product_data['wholesale_price_percentage'] ?? 0;
+
+        $item['code'] = $Product_data['code'];
+        $item['name'] = $Product_data['name'];
+    }
+
+    //check if product has Unit sale
+    if ($Product_data['unitSale']) {
+        if ($Product_data['unitSale']->operator == '/') {
+            $price = $product_price / $Product_data['unitSale']->operator_value;
+            // Apply unit conversion to wholesale and retail prices
+            $item['wholesale_price'] = $item['wholesale_price'] / $Product_data['unitSale']->operator_value;
+            $item['retail_price'] = $item['retail_price'] / $Product_data['unitSale']->operator_value;
+        } else {
+            $price = $product_price * $Product_data['unitSale']->operator_value;
+            // Apply unit conversion to wholesale and retail prices
+            $item['wholesale_price'] = $item['wholesale_price'] * $Product_data['unitSale']->operator_value;
+            $item['retail_price'] = $item['retail_price'] * $Product_data['unitSale']->operator_value;
         }
+    } else {
+        $price = $product_price;
+    }
 
-        //check if product has Unit Purchase
-
-        if ($Product_data['unitPurchase']) {
-
-            if ($Product_data['unitPurchase']->operator == '/') {
-                $cost = $product_cost / $Product_data['unitPurchase']->operator_value;
-            } else {
-                $cost = $product_cost * $Product_data['unitPurchase']->operator_value;
-            }
-
-        }else{
-            $cost = 0;
+    //check if product has Unit Purchase
+    if ($Product_data['unitPurchase']) {
+        if ($Product_data['unitPurchase']->operator == '/') {
+            $cost = $product_cost / $Product_data['unitPurchase']->operator_value;
+        } else {
+            $cost = $product_cost * $Product_data['unitPurchase']->operator_value;
         }
+    } else {
+        $cost = 0;
+    }
 
-        $item['Unit_cost'] = $cost;
-        $item['fix_cost'] = $product_cost;
-        $item['Unit_price'] = $price;
-        $item['fix_price'] = $product_price;
+    $item['Unit_cost'] = $cost;
+    $item['fix_cost'] = $product_cost;
+    $item['Unit_price'] = $price;
+    $item['fix_price'] = $product_price;
 
-        if ($Product_data->TaxNet !== 0.0) {
-            //Exclusive
-            if ($Product_data['tax_method'] == '1') {
-                $tax_price = $price * $Product_data['TaxNet'] / 100;
-                $tax_cost = $cost * $Product_data['TaxNet'] / 100;
+    if ($Product_data->TaxNet !== 0.0) {
+        //Exclusive
+        if ($Product_data['tax_method'] == '1') {
+            $tax_price = $price * $Product_data['TaxNet'] / 100;
+            $tax_cost = $cost * $Product_data['TaxNet'] / 100;
 
-                $item['Total_cost'] = $cost + $tax_cost;
-                $item['Total_price'] = $price + $tax_price;
-                $item['Net_cost'] = $cost;
-                $item['Net_price'] = $price;
-                $item['tax_price'] = $tax_price;
-                $item['tax_cost'] = $tax_cost;
+            $item['Total_cost'] = $cost + $tax_cost;
+            $item['Total_price'] = $price + $tax_price;
+            $item['Net_cost'] = $cost;
+            $item['Net_price'] = $price;
+            $item['tax_price'] = $tax_price;
+            $item['tax_cost'] = $tax_cost;
 
-                // Inxclusive
-            } else {
-                $item['Total_cost'] = $cost;
-                $item['Total_price'] = $price;
-                $item['Net_cost'] = $cost / (($Product_data['TaxNet'] / 100) + 1);
-                $item['Net_price'] = $price / (($Product_data['TaxNet'] / 100) + 1);
-                $item['tax_cost'] = $item['Total_cost'] - $item['Net_cost'];
-                $item['tax_price'] = $item['Total_price'] - $item['Net_price'];
-            }
+            // Apply tax to wholesale and retail prices if needed
+            $item['wholesale_price_tax'] = $item['wholesale_price'] * $Product_data['TaxNet'] / 100;
+            $item['retail_price_tax'] = $item['retail_price'] * $Product_data['TaxNet'] / 100;
+            
+        // Inclusive
         } else {
             $item['Total_cost'] = $cost;
             $item['Total_price'] = $price;
-            $item['Net_cost'] = $cost;
-            $item['Net_price'] = $price;
-            $item['tax_price'] = 0;
-            $item['tax_cost'] = 0;
+            $item['Net_cost'] = $cost / (($Product_data['TaxNet'] / 100) + 1);
+            $item['Net_price'] = $price / (($Product_data['TaxNet'] / 100) + 1);
+            $item['tax_cost'] = $item['Total_cost'] - $item['Net_cost'];
+            $item['tax_price'] = $item['Total_price'] - $item['Net_price'];
+            
+            // Calculate tax-inclusive wholesale and retail prices
+            $item['wholesale_price_tax'] = $item['wholesale_price'] - ($item['wholesale_price'] / (($Product_data['TaxNet'] / 100) + 1));
+            $item['retail_price_tax'] = $item['retail_price'] - ($item['retail_price'] / (($Product_data['TaxNet'] / 100) + 1));
         }
-
-        $data[] = $item;
-
-        return response()->json($data[0]);
+    } else {
+        $item['Total_cost'] = $cost;
+        $item['Total_price'] = $price;
+        $item['Net_cost'] = $cost;
+        $item['Net_price'] = $price;
+        $item['tax_price'] = 0;
+        $item['tax_cost'] = 0;
+        $item['wholesale_price_tax'] = 0;
+        $item['retail_price_tax'] = 0;
     }
 
+    $data[] = $item;
+    return response()->json($data[0]);
+}
     //--------------  Product Quantity Alerts ---------------\\
 
     public function Products_Alert(request $request)
