@@ -347,6 +347,7 @@
                 </b-form-group>
               </validation-provider>
             </b-col>
+            
 <!--  Add these fields to your update detail modal form -->
 <b-col lg="6" md="6" sm="12">
   <validation-provider name="Wholesale Percentage" :rules="{ regex: /^\d*\.?\d*$/}">
@@ -1195,7 +1196,7 @@ updateRetailPrice() {
         this.product.product_id = response.data.id;
         this.product.name = response.data.name;
         this.product.Net_cost = response.data.Net_cost;
-        // this.product.Unit_cost = response.data.Unit_cost;
+       this.product.Unit_cost = response.data.Unit_cost;
         this.product.taxe = response.data.tax_cost;
         this.product.tax_method = response.data.tax_method;
         this.product.tax_percent = response.data.tax_percent;

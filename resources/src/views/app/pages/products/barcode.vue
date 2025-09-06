@@ -75,7 +75,20 @@
             </table>
           </div>
         </b-col>
-
+<b-col md="12">
+  <b-form-group :label="$t('Select Price Label Type')">
+   <v-select
+  v-model="selectedPriceType"
+  :reduce="label => label.value"
+  :placeholder="$t('ChoosePrice')"
+  :options="[
+    { label: $t('Label Price'), value: 'label_price' },
+    { label: $t('Wholesale Price'), value: 'wholesale_price' },
+    { label: $t('Retail Price'), value: 'retail_price' }
+  ]"
+/>
+  </b-form-group>
+</b-col>
          <!-- Paper_size  -->
           <b-col md="12">
             <b-form-group :label="$t('Paper_size')">
@@ -201,6 +214,8 @@ export default {
         code: "",
         Type_barcode: "",
         barcode:"",
+         label_price: "",      
+  wholesale_price: "", 
         Net_price:"",
       }
     };
@@ -322,8 +337,17 @@ export default {
         this.product.barcode = result.barcode;
         this.product.name = result.name;
         this.product.Type_barcode = result.Type_barcode;
-        this.product.Net_price = result.Net_price;
-      }
+           this.product.label_price = result.label_price;             // ✅
+    this.product.wholesale_price = result.wholesale_price; 
+ this.product.Net_price =
+  this.selectedPriceType === 'wholesale_price'
+    ? result.wholesale_price
+    : this.selectedPriceType === 'label_price'
+      ? result.label_price
+      : result.Net_price; // ✅ retail
+
+  }
+      
       this.search_input= '';
       this.$refs.product_autocomplete.value = "";
       this.product_filter = [];
@@ -336,6 +360,20 @@ export default {
         solid: true
       });
     },
+   watch: {
+  selectedPriceType(newVal) {
+    if (!this.product.code) return;
+
+    if (newVal === 'wholesale_price') {
+      this.product.Net_price = this.product.wholesale_price;
+    } else if (newVal === 'label_price') {
+      this.product.Net_price = this.product.label_price;
+    } else if (newVal === 'retail_price') {
+      this.product.Net_price = this.product.Net_price; // keep retail as is
+    }
+  }
+},
+
     //------------------------------------ Get Products By Warehouse -------------------------\\
     Get_Products_By_Warehouse(id) {
       // Start the progress bar.
@@ -413,6 +451,7 @@ export default {
   //-----------------------------Created function-------------------
   created: function() {
     this.Get_Elements();
+     this.selectedPriceType = 'label_price';
   }
 };
 </script>

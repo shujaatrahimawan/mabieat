@@ -134,6 +134,8 @@
                             >
                               <option value="add">{{$t('Addition')}}</option>
                               <option value="sub">{{$t('Subtraction')}}</option>
+                               <option value="destroy">{{$t('Destroy')}}</option>
+                              <option value="waste">{{$t('Wastage')}}</option>
                             </select>
                           </td>
                           <td>

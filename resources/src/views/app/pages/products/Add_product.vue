@@ -232,6 +232,28 @@
                     </b-form-group>
                   </validation-provider>
                 </b-col>
+             <!-- Label Price -->
+<b-col md="6" class="mb-2" v-if="product.type == 'is_single'">
+  <validation-provider
+    name="Label Price"
+    :rules="{ required: true , regex: /^\d*\.?\d*$/}"
+    v-slot="validationContext"
+  >
+    <b-form-group :label="$t('Label Price') + ' ' + '*'">
+      <b-form-input
+        :state="getValidationState(validationContext)"
+        aria-describedby="LabelPrice-feedback"
+        label="Label Price"
+        :placeholder="$t('Enter Label Price')"
+        v-model="product.label_price"
+      ></b-form-input>
+      <b-form-invalid-feedback id="LabelPrice-feedback">
+        {{ validationContext.errors[0] }}
+      </b-form-invalid-feedback>
+    </b-form-group>
+  </validation-provider>
+</b-col>
+
 
                 <!-- Product Retail Price Percentage-->
                 <b-col
@@ -495,6 +517,7 @@
       <th>{{$t('Variant_code')}}</th>
       <th>{{$t('Variant_Name')}}</th>
       <th>{{$t('Variant_cost')}}</th>
+      <th>{{$t('Variant Label Price')}}</th>
       <th>{{$t('Variant_Retail_percentage')}}</th>
       <th>{{$t('Retail_price')}}</th>
       <th>{{$t('Variant_wholesale_percentage')}}</th>
@@ -513,6 +536,11 @@
       <td>
         <input required class="form-control" 
                v-model.number="variant.cost"
+               @change="calculateVariantPrices(variant)">
+      </td>
+       <td>
+        <input required class="form-control" 
+               v-model.number="variant.label_price"
                @change="calculateVariantPrices(variant)">
       </td>
       <td>
@@ -670,7 +698,8 @@ export default {
         not_selling: false,
         retail_price_percentage: "",
         wholesale_price_percentage: "",
-        wholesale_price: ""
+        wholesale_price: "",
+        label_price:"",
       },
       code_exist: ""
     };
@@ -680,6 +709,7 @@ export default {
     VueUploadMultipleImage,
     VueTagsInput
   },
+
   watch: {
     "product.retail_price_percentage": function(newValue) {
       // Recalculate retail price only when retail percentage changes
@@ -689,16 +719,16 @@ export default {
       // Recalculate wholesale price only when wholesale percentage changes
       this.calculatePrices();
     },
-    "product.cost": function(newValue) {
+    "product.label_price": function(newValue) {
       // Recalculate both prices when cost changes
       this.calculatePrices();
     },
-  "product.cost": function(newValue) {
+  "product.label_price": function(newValue) {
     this.calculatePrices();
     // Update all variants' cost if they're empty
     this.variants.forEach(variant => {
-      if (!variant.cost || variant.cost === 0) {
-        variant.cost = newValue;
+      if (!variant.label_price || variant.label_price === 0) {
+        variant.label_price = newValue;
       }
       this.calculateVariantPrices(variant);
     });
@@ -727,18 +757,19 @@ export default {
  
 methods: {
   calculateVariantPrices(variant) {
-    const cost = parseFloat(variant.cost) || 0;
-    
+    const cost = parseFloat(variant.label_price) || 0;
+   
     // Calculate retail price
     if (variant.retail_price_percentage !== undefined) {
       const retailPercentage = parseFloat(variant.retail_price_percentage) || 0;
-      variant.price = (cost + (cost * retailPercentage / 100)).toFixed(2);
+      variant.price = (cost - (cost * retailPercentage / 100)).toFixed(2);
     }
     
     // Calculate wholesale price
     if (variant.wholesale_price_percentage !== undefined) {
       const wholesalePercentage = parseFloat(variant.wholesale_price_percentage) || 0;
-      variant.wholesale_price = (cost + (cost * wholesalePercentage / 100)).toFixed(2);
+      variant.wholesale_price = (cost - (cost * wholesalePercentage / 100)).toFixed(2);
+      
     }
   },
 
@@ -749,13 +780,14 @@ methods: {
   },
   calculatePrices() {
   try {
-    const cost = parseFloat(this.product.cost) || 0;
+    const cost = parseFloat(this.product.label_price) || 0;
     
     // Retail price calculation
     if (this.product.retail_price_percentage !== "" && !isNaN(this.product.retail_price_percentage)) {
       const retailPercentage = parseFloat(this.product.retail_price_percentage);
       if (retailPercentage >= 0) { // Ensure percentage is positive
-        this.product.price = (cost + (cost * retailPercentage / 100)).toFixed(2);
+       this.product.price = (cost - (cost * retailPercentage / 100)).toFixed(2);
+
       }
     }
 
@@ -763,7 +795,7 @@ methods: {
     if (this.product.wholesale_price_percentage !== "" && !isNaN(this.product.wholesale_price_percentage)) {
       const wholesalePercentage = parseFloat(this.product.wholesale_price_percentage);
       if (wholesalePercentage >= 0) { // Ensure percentage is positive
-        this.product.wholesale_price = (cost + (cost * wholesalePercentage / 100)).toFixed(2);
+        this.product.wholesale_price = (cost - (cost * wholesalePercentage / 100)).toFixed(2);
       }
     }
   } catch (error) {
@@ -837,19 +869,19 @@ methods: {
     this.makeToast("warning", this.$t("VariantDuplicate"), this.$t("Warning"));
   } else {
     if (this.tag !== '') {
-      const cost = parseFloat(this.product.cost) || 0;
+      const cost = parseFloat(this.product.label_price) || 0;
       const retailPercentage = parseFloat(this.product.retail_price_percentage) || 0;
       const wholesalePercentage = parseFloat(this.product.wholesale_price_percentage) || 0;
-
       const variant = {
         var_id: this.variants.length + 1,
         text: tag,
         code: '',
         cost,
+        label_price: cost,
         retail_price_percentage: retailPercentage,
         wholesale_price_percentage: wholesalePercentage,
-        price: (cost + (cost * retailPercentage / 100)).toFixed(2),
-        wholesale_price: (cost + (cost * wholesalePercentage / 100)).toFixed(2),
+        price: (cost - (cost * retailPercentage / 100)).toFixed(2),
+        wholesale_price: (cost - (cost * wholesalePercentage / 100)).toFixed(2),
       };
 
       this.variants.push(variant);
