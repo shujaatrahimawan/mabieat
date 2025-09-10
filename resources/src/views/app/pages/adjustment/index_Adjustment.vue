@@ -182,6 +182,8 @@
                   <td>{{formatNumber(detail.quantity ,2)}} {{detail.unit}}</td>
                   <td v-if="detail.type == 'add'">{{$t('Addition')}}</td>
                   <td v-else-if="detail.type == 'sub'">{{$t('Subtraction')}}</td>
+                    <td v-if="detail.type == 'destroy'">{{$t('Destroy')}}</td>
+                  <td v-else-if="detail.type == 'waste'">{{$t('Wastage')}}</td>
                 </tr>
               </tbody>
             </table>

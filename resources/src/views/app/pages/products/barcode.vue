@@ -77,14 +77,14 @@
         </b-col>
 <b-col md="12">
   <b-form-group :label="$t('Select Price Label Type')">
-   <v-select
+<v-select
   v-model="selectedPriceType"
   :reduce="label => label.value"
   :placeholder="$t('ChoosePrice')"
   :options="[
-    { label: $t('Label Price'), value: 'label_price' },
-    { label: $t('Wholesale Price'), value: 'wholesale_price' },
-    { label: $t('Retail Price'), value: 'retail_price' }
+    { label: $t('LabelPrice'), value: 'label_price' },
+    { label: $t('WholesalePrice'), value: 'wholesale_price' },
+    { label: $t('RetailPrice'), value: 'retail_price' }
   ]"
 />
   </b-form-group>
@@ -194,6 +194,7 @@ export default {
       product_filter:[],
       isLoading: true,
       ShowCard: false,
+       selectedPriceType: 'retail_price', 
       barcode: {
         product_id: "",
         warehouse_id: "",
@@ -216,6 +217,7 @@ export default {
         barcode:"",
          label_price: "",      
   wholesale_price: "", 
+  retail_price:"",
         Net_price:"",
       }
     };
@@ -224,8 +226,28 @@ export default {
   computed: {
     ...mapGetters(["currentUser"])
   },
+      watch: {
+  selectedPriceType(newVal) {
+    this.updateDisplayPrice();
+  }
+},
 
   methods: {
+updateDisplayPrice() {
+  if (!this.product.code) return;
+console.log("annas",this.selectedPriceType)
+  if (this.selectedPriceType === 'wholesale_price') {
+    this.product.Net_price = this.product.wholesale_price;
+  } else if (this.selectedPriceType === 'label_price') {
+    this.product.Net_price = this.product.label_price;
+  } else {
+    this.product.Net_price = this.product.retail_price;
+  }
+
+  console.log('Display Price:', this.product.Net_price);
+},
+
+
     Per_Page(){
       this.total_a4 = parseInt(this.barcode.qte/this.sheets);
       this.rest = this.barcode.qte%this.sheets;
@@ -268,6 +290,7 @@ export default {
      
       this.Per_Page();
     },
+
     //------ Validate Form
     submit() {
       this.$refs.show_Barcode.validate().then(success => {
@@ -337,14 +360,14 @@ export default {
         this.product.barcode = result.barcode;
         this.product.name = result.name;
         this.product.Type_barcode = result.Type_barcode;
-           this.product.label_price = result.label_price;             // ✅
-    this.product.wholesale_price = result.wholesale_price; 
- this.product.Net_price =
-  this.selectedPriceType === 'wholesale_price'
-    ? result.wholesale_price
-    : this.selectedPriceType === 'label_price'
-      ? result.label_price
-      : result.Net_price; // ✅ retail
+          // Store all price types
+     // Store original prices from API
+    this.product.label_price = result.label_price;
+    this.product.wholesale_price = result.wholesale_price;
+    this.product.retail_price = result.Net_price; // ✅ retail comes from Net_price
+
+  // Set initial price based on selected type
+    this.updateDisplayPrice();
 
   }
       
@@ -360,19 +383,7 @@ export default {
         solid: true
       });
     },
-   watch: {
-  selectedPriceType(newVal) {
-    if (!this.product.code) return;
 
-    if (newVal === 'wholesale_price') {
-      this.product.Net_price = this.product.wholesale_price;
-    } else if (newVal === 'label_price') {
-      this.product.Net_price = this.product.label_price;
-    } else if (newVal === 'retail_price') {
-      this.product.Net_price = this.product.Net_price; // keep retail as is
-    }
-  }
-},
 
     //------------------------------------ Get Products By Warehouse -------------------------\\
     Get_Products_By_Warehouse(id) {
@@ -451,7 +462,7 @@ export default {
   //-----------------------------Created function-------------------
   created: function() {
     this.Get_Elements();
-     this.selectedPriceType = 'label_price';
+    //  this.selectedPriceType = 'label_price';
   }
 };
 </script>
