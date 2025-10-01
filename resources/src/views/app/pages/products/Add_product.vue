@@ -211,6 +211,28 @@
                   </validation-provider>
                 </b-col>
 
+                   <!--  Cost %-->
+                <b-col md="6" class="mb-2" v-if="product.type == 'is_single'">
+                  <validation-provider
+                    name="Product Cost"
+                    :rules="{ required: true , regex: /^\d*\.?\d*$/}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('Cost Percentage') + ' ' + '*'">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="ProductCost-feedback"
+                        label="Cost"
+                        :placeholder="$t('Enter Product Cost Percentage')"
+                        v-model="product.cost_percentage"
+                      ></b-form-input>
+                      <b-form-invalid-feedback
+                        id="ProductCost-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+
                 <!-- Product Cost -->
                 <b-col md="6" class="mb-2" v-if="product.type == 'is_single'">
                   <validation-provider
@@ -517,6 +539,8 @@
       <th>{{$t('Variant_code')}}</th>
       <th>{{$t('Variant_Name')}}</th>
       <th>{{$t('Variant_cost')}}</th>
+      <th>{{$t('Cost Percentage')}}</th>
+
       <th>{{$t('Variant Label Price')}}</th>
       <th>{{$t('Variant_Retail_percentage')}}</th>
       <th>{{$t('Retail_price')}}</th>
@@ -536,11 +560,16 @@
       <td>
         <input required class="form-control" 
                v-model.number="variant.cost"
-               @change="calculateVariantPrices(variant)">
+              >
       </td>
        <td>
         <input required class="form-control" 
                v-model.number="variant.label_price"
+               @change="calculateVariantPrices(variant)">
+      </td>
+           <td>
+        <input required class="form-control" 
+               v-model.number="variant.cost_percentage"
                @change="calculateVariantPrices(variant)">
       </td>
       <td>
@@ -549,7 +578,7 @@
                @change="calculateVariantPrices(variant)">
       </td>
       <td>
-        <input required class="form-control" v-model="variant.price" readonly>
+        <input required class="form-control" v-model="variant.price" >
       </td>
       <td>
         <input required class="form-control" 
@@ -557,7 +586,7 @@
                @change="calculateVariantPrices(variant)">
       </td>
       <td>
-        <input required class="form-control" v-model="variant.wholesale_price" readonly>
+        <input required class="form-control" v-model="variant.wholesale_price" >
       </td>
       <td>
         <a @click="delete_variant(variant.var_id)" class="btn btn-sm btn-danger">
@@ -696,6 +725,7 @@ export default {
         is_variant: false,
         is_imei: false,
         not_selling: false,
+          cost_percentage: "",  
         retail_price_percentage: "",
         wholesale_price_percentage: "",
         wholesale_price: "",

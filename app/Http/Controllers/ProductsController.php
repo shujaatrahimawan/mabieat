@@ -345,6 +345,7 @@ class ProductsController extends BaseController
                     $Product->retail_price_percentage = $request['retail_price_percentage'];
                     $Product->wholesale_price_percentage = $request['wholesale_price_percentage'];
                     $Product->wholesale_price = $request['wholesale_price'];
+                    $Product->cost_percentage = $request['cost_percentage'];
                     $Product->cost  = $request['cost'];
 
                     $Product->unit_id = $request['unit_id'];
@@ -424,6 +425,7 @@ class ProductsController extends BaseController
                             'retail_price_percentage' => $variant->retail_price_percentage,
                             'wholesale_price_percentage' => $variant->wholesale_price_percentage,
                             'wholesale_price' => $variant->wholesale_price,
+                            'cost_percentage' => $variant->cost_percentage,
                             'code'  => $variant->code,
                         ];
                     }
@@ -477,6 +479,7 @@ class ProductsController extends BaseController
 
     public function update(Request $request, $id)
     {
+        // dd($request);
 
         $this->authorizeForUser($request->user('api'), 'update', Product::class);
         try {
@@ -672,6 +675,7 @@ class ProductsController extends BaseController
                     $Product->retail_price_percentage = $request['retail_price_percentage'];
                     $Product->wholesale_price_percentage = $request['wholesale_price_percentage'];
                     $Product->wholesale_price = $request['wholesale_price'];
+                    $Product->cost_percentage = $request['cost_percentage'];
                     $Product->cost  = $request['cost'];
 
                     $Product->unit_id = $request['unit_id'];
@@ -768,7 +772,8 @@ class ProductsController extends BaseController
                                 $ProductVariantDT->label_price = $variant['label_price'];
                                 $ProductVariantDT->retail_price_percentage = $variant['retail_price_percentage'];
                                 $ProductVariantDT->wholesale_price_percentage = $variant['wholesale_price_percentage'];
-                                $ProductVariantDT->wholesale_price = $variant['wholesale_price'];  
+                                $ProductVariantDT->wholesale_price = $variant['wholesale_price'];
+                                $ProductVariantDT->cost_percentage = $variant['cost_percentage'];
                                 $ProductVariantDT->cost = $variant['cost'];
                                 $ProductVariantDT->code = $variant['code'];
 
@@ -776,6 +781,11 @@ class ProductsController extends BaseController
                                 $ProductVariantUP['code'] = $variant['code'];
                                 $ProductVariantUP['name'] = $variant['text'];
                                 $ProductVariantUP['price'] = $variant['price'];
+                                $ProductVariantUP['label_price'] = $variant['label_price'];
+                                 $ProductVariantUP['retail_price_percentage'] = $variant['retail_price_percentage'];
+        $ProductVariantUP['wholesale_price_percentage'] = $variant['wholesale_price_percentage'];
+        $ProductVariantUP['wholesale_price'] = $variant['wholesale_price'];
+        $ProductVariantUP['cost_percentage'] = $variant['cost_percentage'];
                                 $ProductVariantUP['cost'] = $variant['cost'];
 
                             } else {
@@ -789,13 +799,19 @@ class ProductsController extends BaseController
                                  $ProductVariantDT->label_price = $variant['label_price'];
                                  $ProductVariantDT->retail_price_percentage = $variant['retail_price_percentage'];
                                  $ProductVariantDT->wholesale_price_percentage = $variant['wholesale_price_percentage'];
-                                 $ProductVariantDT->wholesale_price = $variant['wholesale_price'];                        
+                                 $ProductVariantDT->wholesale_price = $variant['wholesale_price'];    
+                                $ProductVariantDT->cost_percentage = $variant['cost_percentage'];
+
                                  $ProductVariantDT->cost = $variant['cost'];
 
                                  $ProductVariantUP['product_id'] = $id;
                                  $ProductVariantUP['code'] = $variant['code'];
                                  $ProductVariantUP['name'] = $variant['text'];
                                  $ProductVariantUP['price'] = $variant['price'];
+                                  $ProductVariantUP['retail_price_percentage'] = $variant['retail_price_percentage'];
+        $ProductVariantUP['wholesale_price_percentage'] = $variant['wholesale_price_percentage'];
+        $ProductVariantUP['wholesale_price'] = $variant['wholesale_price'];
+        $ProductVariantUP['cost_percentage'] = $variant['cost_percentage'];
                                  $ProductVariantUP['cost'] = $variant['cost'];
                                  $ProductVariantUP['qty'] = 0.00;
                             }
@@ -843,6 +859,8 @@ class ProductsController extends BaseController
                            $ProductVariantDT->retail_price_percentage = $variant['retail_price_percentage'];
                            $ProductVariantDT->wholesale_price_percentage = $variant['wholesale_price_percentage'];
                            $ProductVariantDT->wholesale_price = $variant['wholesale_price'];  
+                                $ProductVariantDT->cost_percentage = $variant['cost_percentage'];
+
                            $ProductVarDT->save();
 
 
@@ -1717,6 +1735,7 @@ public function show_product_data($id, $variant_id)
         $item['retail_price_percentage']  = $Product->retail_price_percentage;
         $item['wholesale_price_percentage']  = $Product->wholesale_price_percentage;
         $item['wholesale_price']  = $Product->wholesale_price;
+        $item['cost_percentage']  = $Product->cost_percentage;
 
         $item['cost'] = $Product->cost;
         $item['stock_alert'] = $Product->stock_alert;
@@ -1757,6 +1776,7 @@ public function show_product_data($id, $variant_id)
                 $variant_item['retail_price_percentage'] = $variant->retail_price_percentage;
                 $variant_item['wholesale_price_percentage'] = $variant->wholesale_price_percentage;
                 $variant_item['wholesale_price'] = $variant->wholesale_price;
+                $variant_item['cost_percentage'] = $variant->cost_percentage;
                 $variant_item['product_id'] = $variant->product_id;
                 $item['ProductVariant'][] = $variant_item;
             }
