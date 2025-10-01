@@ -89,6 +89,7 @@ class UserController extends BaseController
         $helpers = new helpers();
         $user['avatar'] = Auth::user()->avatar;
         $user['username'] = Auth::user()->username;
+        $user['type'] = Auth::user()->type;
         $user['currency'] = $helpers->Get_Currency();
         $user['logo'] = Setting::first()->logo;
         $user['default_language'] = Setting::first()->default_language;
@@ -99,7 +100,6 @@ class UserController extends BaseController
             ->whereRaw('qte <= stock_alert')
             ->where('product_warehouse.deleted_at', null)
             ->count();
-
         return response()->json([
             'success' => true,
             'user' => $user,
