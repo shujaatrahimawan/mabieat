@@ -28,6 +28,7 @@ class ProductsController extends BaseController
 
     public function index(request $request)
     {
+        // dd($request);
         $this->authorizeForUser($request->user('api'), 'view', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -90,6 +91,13 @@ class ProductsController extends BaseController
                 $item['type']  = 'Single';
                 $item['cost']  = number_format($product->cost, 2, '.', ',');
                 $item['price'] = number_format($product->price, 2, '.', ',');
+                $item['cost_percentage'] = number_format($product->cost_percentage, 2, '.', ',');
+                $item['label_price'] = number_format($product->label_price, 2, '.', ',');
+                $item['retail_price_percentage'] = number_format($product->retail_price_percentage, 2, '.', ',');
+                $item['wholesale_price_percentage'] = number_format($product->wholesale_price_percentage, 2, '.', ',');
+                $item['wholesale_price'] = number_format($product->wholesale_price, 2, '.', ',');
+
+
                 $item['unit'] = $product['unit']->ShortName;
 
               $product_warehouse_total_qty = product_warehouse::where('product_id', $product->id)
@@ -114,6 +122,16 @@ class ProductsController extends BaseController
                       $item['cost']  .= '<br>';
                       $item['price'] .= number_format($product_variant->price, 2, '.', ',');
                       $item['price'] .= '<br>';
+                        $item['cost_percentage'] .= number_format($product_variant->cost_percentage, 2, '.', ',');
+                      $item['cost_percentage'] .= '<br>';
+                        $item['label_price'] .= number_format($product_variant->label_price, 2, '.', ',');
+                      $item['label_price'] .= '<br>';
+                        $item['retail_price_percentage'] .= number_format($product_variant->retail_price_percentage, 2, '.', ',');
+                      $item['retail_price_percentage'] .= '<br>';
+                        $item['wholesale_price_percentage'] .= number_format($product_variant->wholesale_price_percentage, 2, '.', ',');
+                      $item['wholesale_price_percentage'] .= '<br>';
+                        $item['wholesale_price'] .= number_format($product_variant->wholesale_price, 2, '.', ',');
+                      $item['wholesale_price'] .= '<br>';
                   }
 
                   $product_warehouse_total_qty = product_warehouse::where('product_id', $product->id)
@@ -129,6 +147,7 @@ class ProductsController extends BaseController
                   $item['unit'] = '----';
 
                   $item['price'] = number_format($product->price, 2, '.', ',');
+                  $item['wholesale_price'] = number_format($product->wholesale_price, 2, '.', ',');
               }
 
 
@@ -1056,7 +1075,6 @@ class ProductsController extends BaseController
             $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
-
         $item['id'] = $Product->id;
         $item['type'] = $Product->type;
         $item['code'] = $Product->code;
@@ -1066,10 +1084,16 @@ class ProductsController extends BaseController
         $item['category'] = $Product['category']->name;
         $item['brand'] = $Product['brand'] ? $Product['brand']->name : 'N/D';
         $item['price'] = $Product->price;
+        $item['label_price'] = $Product->label_price;
+        $item['retail_price_percentage'] = $Product->retail_price_percentage;
+        $item['wholesale_price_percentage'] = $Product->wholesale_price_percentage;
+        $item['wholesale_price'] = $Product->wholesale_price;
+        $item['cost_percentage'] = $Product->cost_percentage;
         $item['cost'] = $Product->cost;
         $item['stock_alert'] = $Product->stock_alert;
         $item['taxe'] = $Product->TaxNet;
         $item['tax_method'] = $Product->tax_method == '1' ? 'Exclusive' : 'Inclusive';
+
 
         if($Product->type == 'is_single'){
             $item['type_name']  = 'Single';
@@ -1095,6 +1119,12 @@ class ProductsController extends BaseController
                 $ProductVariant['name'] = $variant->name;
                 $ProductVariant['cost'] = number_format($variant->cost, 2, '.', ',');
                 $ProductVariant['price'] = number_format($variant->price, 2, '.', ',');
+                $ProductVariant['label_price'] = number_format($variant->label_price, 2, '.', ',');
+                $ProductVariant['retail_price_percentage'] = $variant->retail_price_percentage;
+                $ProductVariant['wholesale_price_percentage'] = $variant->wholesale_price_percentage;
+                $ProductVariant['wholesale_price'] = number_format($variant->wholesale_price, 2, '.', ',');
+                $ProductVariant['cost_percentage'] = $variant->cost_percentage;
+                
 
                 $item['products_variants_data'][] = $ProductVariant;
 

@@ -155,5 +155,20 @@
 	font-size: 14px;
 	line-height: 20px;
 } 
+.blackcopper_lp1300 {
+  width: 57mm;
+  height: 30mm;
+  display: inline-block;
+  margin: 2mm;
+  padding: 2mm;
+  border: 1px dashed #ccc;
+  text-align: center;
+}
+
+.barcode_roll {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+}
 
 	

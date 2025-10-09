@@ -107,6 +107,7 @@
                         {label: '14 per sheet (4 * 1.33)', value: 'style14'},
                         {label: '12 per sheet (a4) (2.5 * 2.834)', value: 'style12'},
                         {label: '10 per sheet (4 * 2)', value: 'style10'},
+                        { label: 'BlackCopper BC-LP1300 (57mm x 30mm)', value: 'blackcopper_lp1300' },
                       ]"
               ></v-select>
             </b-form-group>
@@ -235,7 +236,6 @@ export default {
   methods: {
 updateDisplayPrice() {
   if (!this.product.code) return;
-console.log("annas",this.selectedPriceType)
   if (this.selectedPriceType === 'wholesale_price') {
     this.product.Net_price = this.product.wholesale_price;
   } else if (this.selectedPriceType === 'label_price') {
@@ -287,6 +287,11 @@ console.log("annas",this.selectedPriceType)
         this.class_sheet = 'style10';
        this.class_type_page = 'barcode_non_a4';
       }
+      else if (value == 'blackcopper_lp1300') {
+  this.sheets = 1; // one label per print roll
+  this.class_sheet = 'blackcopper_lp1300';
+  this.class_type_page = 'barcode_roll'; // custom print layout (you can adjust)
+}
      
       this.Per_Page();
     },

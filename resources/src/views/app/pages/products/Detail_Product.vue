@@ -49,9 +49,31 @@
                   <td>{{$t('Cost')}}</td>
                   <th>{{currentUser.currency}} {{formatNumber(product.cost ,2)}}</th>
                 </tr>
+                  <tr v-if="product.type == 'is_single'">
+                  <td>{{$t('Cost Percentage')}}</td>
+                  <th>{{currentUser.currency}} {{formatNumber(product.cost_percentage ,2)}}</th>
+                </tr>  <tr v-if="product.type == 'is_single'">
+                  <td>{{$t('Label Price')}}</td>
+                  <th>{{currentUser.currency}} {{formatNumber(product.label_price ,2)}}</th>
+                </tr>  <tr v-if="product.type == 'is_single'">
+                  <td>{{$t('Retail Price Percentage')}}</td>
+                  <th>{{currentUser.currency}} {{formatNumber(product.retail_price_percentage ,2)}}</th>
+                </tr>  <tr v-if="product.type == 'is_single'">
+                  <td>{{$t('Wholesale Price Percentage')}}</td>
+                  <th>{{currentUser.currency}} {{formatNumber(product.wholesale_price_percentage ,2)}}</th>
+                </tr>
+                  </tr>  <tr v-if="product.type == 'is_single'">
+                  <td>{{$t('Wholesale Price')}}</td>
+                  <th>{{currentUser.currency}} {{formatNumber(product.wholesale_price ,2)}}</th>
+                </tr>
+
                 <tr v-if="product.type != 'is_variant'">
                   <td>{{$t('Price')}}</td>
                   <th>{{currentUser.currency}} {{formatNumber(product.price ,2)}}</th>
+                </tr>
+                 <tr v-if="product.type != 'is_variant'">
+                  <td>{{$t('Wholesale Price')}}</td>
+                  <th>{{currentUser.currency}} {{formatNumber(product.wholesale_price ,2)}}</th>
                 </tr>
                 <tr v-if="product.type != 'is_service'">
                   <td>{{$t('Unit')}}</td>
@@ -99,14 +121,18 @@
           </b-col>
 
           <!-- product variant -->
-          <b-col md="5" class="mt-4" v-if="product.type == 'is_variant'">
+          <b-col md="8" class="mt-4" v-if="product.type == 'is_variant'">
             <table class="table table-hover table-sm">
               <thead>
                 <tr>
                   <th>{{$t('Variant_code')}}</th>
                   <th>{{$t('Variant_Name')}}</th>
                   <th>{{$t('Variant_cost')}}</th>
-                  <th>{{$t('Variant_price')}}</th>
+                  <th>{{$t('Variant Retail Price')}}</th>
+                   <th>{{$t('Variant Cost Percentage')}}</th>
+                  <th>{{$t('Variant Wholesale Price')}}</th> 
+                  <th>{{$t('Variant Retail Price Percentage')}}</th>
+                  <th>{{$t('Variant Label Price')}}</th>
                 </tr>
               </thead>
               <tbody>
@@ -115,13 +141,17 @@
                   <td>{{product_variant_data.name}}</td>
                   <td>{{currentUser.currency}} {{product_variant_data.cost}}</td>
                   <td>{{currentUser.currency}} {{product_variant_data.price}}</td>
+                  <td>{{currentUser.currency}} {{product_variant_data.cost_percentage}}</td>
+                  <td>{{currentUser.currency}} {{product_variant_data.wholesale_price}}</td>
+                  <td>{{currentUser.currency}} {{product_variant_data.retail_price_percentage}}</td>
+                  <td>{{currentUser.currency}} {{product_variant_data.label_price}}</td>
                 </tr>
               </tbody>
             </table>
           </b-col>
 
            <!-- Warehouse Quantity -->
-          <b-col md="7" class="mt-4" v-if="product.type == 'is_single'">
+          <b-col md="4" class="mt-4" v-if="product.type == 'is_single'">
             <table class="table table-hover table-sm">
               <thead>
                 <tr>
