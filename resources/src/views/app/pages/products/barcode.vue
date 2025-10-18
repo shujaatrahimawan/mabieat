@@ -275,7 +275,7 @@ updateDisplayPrice() {
         this.class_sheet = 'style18';
         this.class_type_page = 'barcodea4';
       }else if(value == 'style14'){
-        this.sheets = 14;
+        this.sheets = 24;
         this.class_sheet = 'style14';
         this.class_type_page = 'barcode_non_a4';
       }else if(value == 'style12'){
@@ -287,10 +287,10 @@ updateDisplayPrice() {
         this.class_sheet = 'style10';
        this.class_type_page = 'barcode_non_a4';
       }
-      else if (value == 'blackcopper_lp1300') {
-  this.sheets = 1; // one label per print roll
-  this.class_sheet = 'blackcopper_lp1300';
-  this.class_type_page = 'barcode_roll'; // custom print layout (you can adjust)
+else if (value == 'blackcopper_lp1300') {
+ this.sheets = 24;
+        this.class_sheet = 'style14';
+        this.class_type_page = 'barcode_non_a4';
 }
      
       this.Per_Page();
