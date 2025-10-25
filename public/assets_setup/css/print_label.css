@@ -20,12 +20,12 @@
 }
 
 .barcode_non_a4{
-    width: 4in;
-    height: 10.3in;
-    display: block;
-    border: 1px solid #CCC;
-    margin-top: .5px ;
-    padding-top: 0.1in;
+    width: 3.6in;
+    /* height: 10.3in; */
+    /* display: block; */
+    /* border: .5px solid #CCC; */
+    /* margin-top: .5px ; */
+    /* padding-top: 0.1in; */
     page-break-after: always;
 }
 
@@ -140,15 +140,32 @@
 	font-size: 13px;
 	line-height: 20px;
 } 
-
 .barcode_non_a4 .style14 {
     width: 1.1in;
     height: 1in;
-	margin: 0 0.1in; 
-	margin-top: 10px;
+    margin-top: 13mm;
+    margin-bottom: 0mm;
+    margin-right: 0mm;
+    font-size: 6px !important;
+    line-height: 8px !important;
+    transform: scale(0.9); /* Additional scaling if needed */
+}
+
+.barcode_non_a4 .style14 * {
+    font-size: inherit !important;
+    line-height: inherit !important;
+}
+/* .barcode_non_a4 .style14 {
+    width: 1.1in;
+    height: 1in;
+	/* margin: 0 0.1in;  */
+	margin-top: 13mm;
+	/* margin-left: 5mm; */
+	margin-bottom: 0mm;
+	margin-right: 0mm;
 	     /* padding: 0.05in; */
 	font-size:5px;
-} 
+}  */
 /* .barcode_non_a4 .style14 {
     width: 4in;
     height: 1.33in;
