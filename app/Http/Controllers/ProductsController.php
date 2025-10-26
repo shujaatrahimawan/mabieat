@@ -1438,7 +1438,7 @@ $item['wholesale_price'] = $product_wholesale_price;
 //     }
 public function show_product_data($id, $variant_id)
 {
-      
+    //   dd("annas");
     $Product_data = Product::with('unit')
         ->where('id', $id)
         ->where('deleted_at', '=', null)
