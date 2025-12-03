@@ -107,7 +107,7 @@
                         {label: '14 per sheet (4 * 1.33)', value: 'style14'},
                         {label: '12 per sheet (a4) (2.5 * 2.834)', value: 'style12'},
                         {label: '10 per sheet (4 * 2)', value: 'style10'},
-                        { label: 'BlackCopper BC-LP1300 (90mm x 19mm)', value: 'blackcopper_lp1300' },
+                        { label: 'BlackCopper BC-LP1300 (57mm x 30mm)', value: 'blackcopper_lp1300' },
                       ]"
               ></v-select>
             </b-form-group>
@@ -137,7 +137,7 @@
               <div class="barcode-row" v-if="ShowCard" id="print_barcode_label">
                 <div :class="class_type_page" v-for ="(k, i) in total_a4" :key="i">
                   <div class="barcode-item" :class="class_sheet"  v-for="(sheet, index) in sheets" :key="index" >
-                    <div class="head_barcode" style=" padding-left: 0px;font-weight: bold; ">
+                    <div class="head_barcode text-left" style=" padding-left: 10px;font-weight: bold; ">
                       <span class="barcode-name">{{product.name}}</span>
                       <span class="barcode-price">{{currentUser.currency}} {{product.Net_price}}</span>
                     </div>
@@ -155,7 +155,7 @@
                 </div>
                 <div :class="class_type_page"  v-if="rest > 0">
                   <div class="barcode-item" :class="class_sheet"  v-for="(sheet, index) in rest" :key="index" >
-                    <div class="head_barcode" style=" padding-left: 0px;font-weight: bold; ">
+                    <div class="head_barcode text-left" style=" padding-left: 10px;font-weight: bold; ">
                       <span class="barcode-name">{{product.name}}</span>
                       <span class="barcode-price">{{currentUser.currency}} {{product.Net_price}}</span>
                     </div>
@@ -441,9 +441,8 @@ else if (value == 'blackcopper_lp1300') {
         .get("barcode_create_page")
         .then(response => {
           this.warehouses = response.data.warehouses;
-
-           // Auto select warehouse if only one exists
-          if (this.warehouses.length === 1) {
+              // Auto select warehouse if only one exists
+              if (this.warehouses.length === 1) {
             const warehouse = this.warehouses[0];
 
             this.barcode.warehouse_id = warehouse.id;
@@ -451,7 +450,6 @@ else if (value == 'blackcopper_lp1300') {
             // Auto load products for this warehouse
             this.Selected_Warehouse(warehouse.id);
           }
-
           this.isLoading = false;
         })
         .catch(response => {

@@ -37,42 +37,34 @@
 }
 
 .barcode_non_a4 .barcode-item {
-	/* display: block;
+	display: block;
 	overflow: hidden;
 	text-align: center;
 	border: 1px dotted #CCC;
 	font-size: 12px;
 	line-height: 14px;
 	text-transform: uppercase;
-	float: left; */
-	/* width:30%;
-	text-align: center; */
-	 width: 33.3333%;
-  box-sizing: border-box;
-  padding: 5px;
+	float: left;
 } 
 
 .barcode_non_a4 .head_barcode{
 	padding-left: 10px;
 	font-weight: bold;
-	text-align: center;
-	font-size: 12px !important;
-	/* text-align: left; */
+	text-align: left;
 }
 
 .barcodea4 .head_barcode{
 	padding-left: 10px;
 	font-weight: bold;
-	text-align: center;
-	/* text-align: left; */
+	text-align: left;
 }
 
 .barcode-name{
-	display: inline-block;
+	display: block;
 }
 
 .barcode-price{
-	display: inline-block;
+	display: block;
 }
 
 .barcodea4 .style24 .head_barcode{
@@ -173,7 +165,7 @@
 .barcode_roll {
   display: grid;
   grid-template-columns: repeat(3, 1.2in); 
-  /*grid-auto-rows: 1in;*/
+  grid-auto-rows: 1in;
   justify-content: start;       /* ← Ensures content starts from left */
   align-items: start;
   gap: 0;
@@ -183,17 +175,11 @@
   box-sizing: border-box;
   width: auto;
 }
-.head_barcode {
-    z-index: 1;
-    margin-top: -6px;
-}
-.barcode {
-    margin-top: -11px;
-}
+
 /* SINGLE LABEL: 1.2in x 1in */
 .blackcopper_lp1300 {
-  /*width: 1.2in;*/
-  /*height: 1in;*/
+  width: 1.2in;
+  height: 1in;
   box-sizing: border-box;
   /* padding: 1px;               small padding inside the sticker */
   border: 1px dashed #ccc;
