@@ -288,9 +288,9 @@ updateDisplayPrice() {
        this.class_type_page = 'barcode_non_a4';
       }
 else if (value == 'blackcopper_lp1300') {
- this.sheets = 24;
-        this.class_sheet = 'style14';
-        this.class_type_page = 'barcode_non_a4';
+  this.sheets = 12;
+  this.class_type_page = 'barcode_roll';       // outer div
+  this.class_sheet = 'blackcopper_lp1300';     // inner label div
 }
      
       this.Per_Page();

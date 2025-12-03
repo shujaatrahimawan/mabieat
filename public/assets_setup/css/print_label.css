@@ -7,7 +7,14 @@
 	.barcode_non_a4 , .barcode_non_a4 .barcode-item, .barcodea4 , .barcodea4 .barcode-item{
 		border: none!important;
 	}
+	  .barcode_roll {
+    width: 100%;
+  }
+  .blackcopper_lp1300 {
+    page-break-inside: avoid;
+  }
 }
+
 
 .barcodea4{
     width: 8.25in;
@@ -20,16 +27,6 @@
 }
 
 .barcode_non_a4{
-    width: 3.6in;
-    /* height: 10.3in; */
-    /* display: block; */
-    /* border: .5px solid #CCC; */
-    /* margin-top: .5px ; */
-    /* padding-top: 0.1in; */
-    page-break-after: always;
-}
-
-/* .barcode_non_a4{
     width: 8.45in;
     height: 10.3in;
     display: block;
@@ -37,7 +34,7 @@
     margin: 10px auto;
     padding-top: 0.1in;
     page-break-after: always;
-} */
+}
 
 .barcode_non_a4 .barcode-item {
 	display: block;
@@ -140,38 +137,13 @@
 	font-size: 13px;
 	line-height: 20px;
 } 
-.barcode_non_a4 .style14 {
-    width: 1.1in;
-    height: 1in;
-    margin-top: 3mm;
-    margin-bottom: 0mm;
-    margin-right: 0mm;
-    font-size: 6px !important;
-    line-height: 8px !important;
-    transform: scale(0.9); /* Additional scaling if needed */
-}
 
-.barcode_non_a4 .style14 * {
-    font-size: inherit !important;
-    line-height: inherit !important;
-}
-/* .barcode_non_a4 .style14 {
-    width: 1.1in;
-    height: 1in;
-	/* margin: 0 0.1in;  */
-	/* margin-top: 13mm; */
-	/* margin-left: 5mm; */
-	/* margin-bottom: 0mm;
-	margin-right: 0mm; */
-	     /* padding: 0.05in; */
-	/* font-size:5px;
-}  */ 
-/* .barcode_non_a4 .style14 {
+.barcode_non_a4 .style14 {
     width: 4in;
     height: 1.33in;
 	margin: 0 0.1in;
 	padding-top: 0.1in;
-}  */
+} 
 
 .barcodea4 .style12 {
     width: 2.5in;
@@ -190,20 +162,48 @@
 	font-size: 14px;
 	line-height: 20px;
 } 
+.barcode_roll {
+  display: grid;
+  grid-template-columns: repeat(3, 1.2in); 
+  grid-auto-rows: 1in;
+  justify-content: start;       /* ← Ensures content starts from left */
+  align-items: start;
+  gap: 0;
+
+  margin: 0 !important;         /* ← Removes left gap */
+  padding: 0 !important;        /* ← Removes inner padding */
+  box-sizing: border-box;
+  width: auto;
+}
+
+/* SINGLE LABEL: 1.2in x 1in */
 .blackcopper_lp1300 {
-  width: 57mm;
-  height: 30mm;
-  display: inline-block;
-  margin: 2mm;
-  padding: 2mm;
+  width: 1.2in;
+  height: 1in;
+  box-sizing: border-box;
+  /* padding: 1px;               small padding inside the sticker */
   border: 1px dashed #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
   text-align: center;
 }
-
-.barcode_roll {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: start;
+/* MAKE TEXT SMALLER */
+.blackcopper_lp1300 .barcode-name {
+  font-size: 9px;       /* 🔽 smaller product name */
+  line-height: 1.1;
+  font-weight: bold;
 }
 
+.blackcopper_lp1300 .barcode-price {
+  font-size: 9px;       /* 🔽 smaller price font */
+  line-height: 1.1;
+  font-weight: bold;
+}
+
+/* Optional: keep barcode-item neutral */
+.barcode-item {
+  margin: 0;
+  padding: 0;
+}
 	
