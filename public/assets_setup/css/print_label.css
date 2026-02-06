@@ -37,26 +37,34 @@
 }
 
 .barcode_non_a4 .barcode-item {
-	display: block;
+	/* display: block;
 	overflow: hidden;
 	text-align: center;
 	border: 1px dotted #CCC;
 	font-size: 12px;
 	line-height: 14px;
 	text-transform: uppercase;
-	float: left;
+	float: left; */
+	/* width:30%;
+	text-align: center; */
+	 width: 33.3333%;
+  box-sizing: border-box;
+  padding: 5px;
 } 
 
 .barcode_non_a4 .head_barcode{
 	padding-left: 10px;
 	font-weight: bold;
-	text-align: left;
+	text-align: center;
+	font-size: 12px !important;
+	/* text-align: left; */
 }
 
 .barcodea4 .head_barcode{
 	padding-left: 10px;
 	font-weight: bold;
-	text-align: left;
+	text-align: center;
+	/* text-align: left; */
 }
 
 .barcode-name{
