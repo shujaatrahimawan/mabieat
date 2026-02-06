@@ -1202,6 +1202,7 @@ class SalesController extends BaseController
 
       public function edit(Request $request, $id)
       {
+
         if (SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->exists()) {
             return response()->json(['success' => false , 'Return exist for the Transaction' => false], 403);
         }else{
@@ -1217,7 +1218,6 @@ class SalesController extends BaseController
               // Check If User->id === sale->id
               $this->authorizeForUser($request->user('api'), 'check_record', $Sale_data);
           }
-  
           if ($Sale_data->client_id) {
               if (Client::where('id', $Sale_data->client_id)
                   ->where('deleted_at', '=', null)
@@ -1261,6 +1261,8 @@ class SalesController extends BaseController
                     $product_unit_sale_id = Product::with('unitSale')
                     ->where('id', $detail->product_id)
                     ->first();
+               
+  
 
                     if($product_unit_sale_id['unitSale']){
                         $unit = Unit::where('id', $product_unit_sale_id['unitSale']->id)->first();
@@ -1278,15 +1280,16 @@ class SalesController extends BaseController
                       ->where('product_variant_id', $detail->product_variant_id)
                       ->where('warehouse_id', $Sale_data->warehouse_id)
                       ->first();
-  
                   $productsVariants = ProductVariant::where('product_id', $detail->product_id)
                       ->where('id', $detail->product_variant_id)->first();
-  
                   $item_product ? $data['del'] = 0 : $data['del'] = 1;
                   $data['product_variant_id'] = $detail->product_variant_id;
                   $data['code'] = $productsVariants->code;
                   $data['name'] = '['.$productsVariants->name . ']' . $detail['product']['name'];
-                 
+                     $data['wholesale_price'] = $productsVariants['wholesale_price'] ?? 0;
+        $data['retail_price'] = $productsVariants['retail_price'] ?? 0;
+        $data['retail_price_percentage'] = $productsVariants['retail_price_percentage'] ?? 0;
+        $data['wholesale_price_percentage'] = $productsVariants['wholesale_price_percentage'] ?? 0;
                   if ($unit && $unit->operator == '/') {
                     $stock = $item_product ? $item_product->qte * $unit->operator_value : 0;
                   } else if ($unit && $unit->operator == '*') {
@@ -1304,6 +1307,10 @@ class SalesController extends BaseController
                   $data['product_variant_id'] = null;
                   $data['code'] = $detail['product']['code'];
                   $data['name'] = $detail['product']['name'];
+                         $data['wholesale_price'] = $detail['product']['wholesale_price'] ?? 5;
+        $data['retail_price'] = $detail['product']['retail_price'] ?? 0;
+        $data['retail_price_percentage'] = $detail['product']['retail_price_percentage'] ?? 0;
+        $data['wholesale_price_percentage'] = $detail['product']['wholesale_price_percentage'] ?? 0;
 
                   if ($unit && $unit->operator == '/') {
                         $stock= $item_product ? $item_product->qte * $unit->operator_value : 0;
@@ -1337,7 +1344,7 @@ class SalesController extends BaseController
 
                 $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
                 $data['Unit_price'] = $detail->price;
-                
+                    
                 $data['tax_percent'] = $detail->TaxNet;
                 $data['tax_method'] = $detail->tax_method;
                 $data['discount'] = $detail->discount;

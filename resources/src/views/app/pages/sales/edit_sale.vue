@@ -502,6 +502,7 @@ export default {
         name: "",
         unitSale: "",
         Net_price: "",
+        wholesale_price: "",
         Total_price: "",
         Unit_price: "",
         subtotal: "",
@@ -519,9 +520,13 @@ export default {
     };
   },
 
-  computed: {
-    ...mapGetters(["currentUserPermissions","currentUser"])
-  },
+ computed: {
+  ...mapGetters(["currentUserPermissions","currentUser"]),
+
+  userType() {
+    return this.currentUser?.type || "Retail";
+  }
+},
 
   methods: {
 
@@ -580,6 +585,9 @@ export default {
       this.detail.name = detail.name;
       this.detail.detail_id = detail.detail_id;
       this.detail.Unit_price = detail.Unit_price;
+      if(this.userType === 'Wholesale'){
+        this.detail.Unit_price = detail.wholesale_price;
+      }
       this.detail.tax_method = detail.tax_method;
       this.detail.discount_Method = detail.discount_Method;
       this.detail.discount = detail.discount;
@@ -1033,8 +1041,13 @@ export default {
         this.product.product_id = response.data.id;
         this.product.name = response.data.name;
         this.product.product_type = response.data.product_type;
+       if (this.userType === "Wholesale" && response.data.wholesale_price) {
+        this.product.Net_price = response.data.wholesale_price;
+        this.product.Unit_price = response.data.wholesale_price;
+      } else {
         this.product.Net_price = response.data.Net_price;
         this.product.Unit_price = response.data.Unit_price;
+      }
         this.product.taxe = response.data.tax_price;
         this.product.tax_method = response.data.tax_method;
         this.product.tax_percent = response.data.tax_percent;
@@ -1055,6 +1068,15 @@ export default {
         .then(response => {
           this.sale = response.data.sale;
           this.details = response.data.details;
+          if (this.userType === "Wholesale") {
+        this.details.forEach(detail => {
+          if (detail.wholesale_price) {
+            detail.Unit_price = detail.wholesale_price;
+            detail.Net_price = detail.wholesale_price;
+          }
+        });
+      }
+
           this.clients = response.data.clients;
           this.warehouses = response.data.warehouses;
           this.Get_Products_By_Warehouse(this.sale.warehouse_id);
