@@ -748,6 +748,9 @@ export default {
     isSelectedCard() {
       return card => this.selectedCard === card;
     },
+      userType() {
+    return this.currentUser?.type || "Retail";
+  },
 
   },
 
@@ -1509,8 +1512,15 @@ export default {
         this.product.product_id = response.data.id;
         this.product.product_type = response.data.product_type;
         this.product.name = response.data.name;
-        this.product.Net_price = response.data.Net_price;
-        this.product.Unit_price = response.data.Unit_price;
+           if (this.userType === "Wholesale" && response.data.wholesale_price) {
+      this.product.Net_price = response.data.wholesale_price;
+      this.product.Unit_price = response.data.wholesale_price;
+    } else {
+      this.product.Net_price = response.data.Net_price;
+      this.product.Unit_price = response.data.Unit_price;
+    }
+        // this.product.Net_price = response.data.Net_price;
+        // this.product.Unit_price = response.data.Unit_price;
         this.product.taxe = response.data.tax_price;
         this.product.tax_method = response.data.tax_method;
         this.product.tax_percent = response.data.tax_percent;

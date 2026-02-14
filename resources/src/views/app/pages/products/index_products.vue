@@ -392,14 +392,57 @@ export default {
           tdClass: "text-left",
           thClass: "text-left"
         },
+                    {
+          label: this.$t("Label Price"),
+          field: "label_price",
+          // type: "decimal",
+          html: true,
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
         {
-          label: this.$t("Price"),
+          label: this.$t("Retail Price"),
           field: "price",
           // type: "decimal",
           html: true,
           tdClass: "text-left",
           thClass: "text-left"
         },
+             {
+          label: this.$t("Retail Price %"),
+          field: "retail_price_percentage",
+          // type: "decimal",
+          html: true,
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+             {
+          label: this.$t("Wholesale Price"),
+          field: "wholesale_price",
+          // type: "decimal",
+          html: true,
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+             {
+          label: this.$t("Wholesale Price %"),
+          field: "wholesale_price_percentage",
+          // type: "decimal",
+          html: true,
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+             {
+          label: this.$t("cost percentage"),
+          field: "cost_percentage",
+          // type: "decimal",
+          html: true,
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+ 
+
+
         {
           label: this.$t("Unit"),
           field: "unit",

@@ -11,8 +11,8 @@ class Product extends Model
 
     protected $fillable = [
         'code', 'Type_barcode', 'name', 'cost', 'price', 'unit_id', 'unit_sale_id', 'unit_purchase_id',
-        'stock_alert', 'category_id', 'sub_category_id', 'is_variant','is_imei',
-        'tax_method', 'image', 'brand_id', 'is_active', 'note','type'
+        'stock_alert', 'category_id', 'sub_category_id', 'is_variant','is_imei','retail_price_percentage','wholesale_price_percentage','wholesale_price',
+        'tax_method', 'image', 'brand_id', 'is_active', 'note','type','cost_percentage'
     ];
 
     protected $casts = [

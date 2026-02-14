@@ -28,6 +28,7 @@ class ProductsController extends BaseController
 
     public function index(request $request)
     {
+        // dd($request);
         $this->authorizeForUser($request->user('api'), 'view', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -90,6 +91,13 @@ class ProductsController extends BaseController
                 $item['type']  = 'Single';
                 $item['cost']  = number_format($product->cost, 2, '.', ',');
                 $item['price'] = number_format($product->price, 2, '.', ',');
+                $item['cost_percentage'] = number_format($product->cost_percentage, 2, '.', ',');
+                $item['label_price'] = number_format($product->label_price, 2, '.', ',');
+                $item['retail_price_percentage'] = number_format($product->retail_price_percentage, 2, '.', ',');
+                $item['wholesale_price_percentage'] = number_format($product->wholesale_price_percentage, 2, '.', ',');
+                $item['wholesale_price'] = number_format($product->wholesale_price, 2, '.', ',');
+
+
                 $item['unit'] = $product['unit']->ShortName;
 
               $product_warehouse_total_qty = product_warehouse::where('product_id', $product->id)
@@ -114,6 +122,16 @@ class ProductsController extends BaseController
                       $item['cost']  .= '<br>';
                       $item['price'] .= number_format($product_variant->price, 2, '.', ',');
                       $item['price'] .= '<br>';
+                        $item['cost_percentage'] .= number_format($product_variant->cost_percentage, 2, '.', ',');
+                      $item['cost_percentage'] .= '<br>';
+                        $item['label_price'] .= number_format($product_variant->label_price, 2, '.', ',');
+                      $item['label_price'] .= '<br>';
+                        $item['retail_price_percentage'] .= number_format($product_variant->retail_price_percentage, 2, '.', ',');
+                      $item['retail_price_percentage'] .= '<br>';
+                        $item['wholesale_price_percentage'] .= number_format($product_variant->wholesale_price_percentage, 2, '.', ',');
+                      $item['wholesale_price_percentage'] .= '<br>';
+                        $item['wholesale_price'] .= number_format($product_variant->wholesale_price, 2, '.', ',');
+                      $item['wholesale_price'] .= '<br>';
                   }
 
                   $product_warehouse_total_qty = product_warehouse::where('product_id', $product->id)
@@ -129,6 +147,7 @@ class ProductsController extends BaseController
                   $item['unit'] = '----';
 
                   $item['price'] = number_format($product->price, 2, '.', ',');
+                  $item['wholesale_price'] = number_format($product->wholesale_price, 2, '.', ',');
               }
 
 
@@ -161,7 +180,7 @@ class ProductsController extends BaseController
     public function store(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'create', Product::class);
-
+// dd($request);
         try {
            
             // define validation rules for product
@@ -184,6 +203,9 @@ class ProductsController extends BaseController
                 'unit_id'      => Rule::requiredIf($request->type != 'is_service'),
                 'cost'         => Rule::requiredIf($request->type == 'is_single'),
                 'price'        => Rule::requiredIf($request->type != 'is_variant'),
+                // 'wholesale_price'  => Rule::requiredIf($request->type != 'is_variant'),
+                // 'wholesale_price_percentage'  => Rule::requiredIf($request->type != 'is_service'),
+                // 'retail_price_percentage'  => Rule::requiredIf($request->type != 'is_service'),
             ];
 
 
@@ -338,6 +360,11 @@ class ProductsController extends BaseController
                  //-- check if type is_single
                  if($request['type'] == 'is_single'){
                     $Product->price = $request['price'];
+                    $Product->label_price = $request['label_price'];
+                    $Product->retail_price_percentage = $request['retail_price_percentage'];
+                    $Product->wholesale_price_percentage = $request['wholesale_price_percentage'];
+                    $Product->wholesale_price = $request['wholesale_price'];
+                    $Product->cost_percentage = $request['cost_percentage'];
                     $Product->cost  = $request['cost'];
 
                     $Product->unit_id = $request['unit_id'];
@@ -366,6 +393,8 @@ class ProductsController extends BaseController
                 //-- check if type is_service
                 }else{
                     $Product->price = $request['price'];
+                    
+                    $Product->wholesale_price = $request['wholesale_price'];
                     $Product->cost  = 0;
 
                     $Product->unit_id = NULL;
@@ -410,6 +439,12 @@ class ProductsController extends BaseController
                             'name'  => $variant->text,
                             'cost'  => $variant->cost,
                             'price' => $variant->price,
+                            'label_price' => $variant->label_price,
+
+                            'retail_price_percentage' => $variant->retail_price_percentage,
+                            'wholesale_price_percentage' => $variant->wholesale_price_percentage,
+                            'wholesale_price' => $variant->wholesale_price,
+                            'cost_percentage' => $variant->cost_percentage,
                             'code'  => $variant->code,
                         ];
                     }
@@ -463,6 +498,7 @@ class ProductsController extends BaseController
 
     public function update(Request $request, $id)
     {
+        // dd($request);
 
         $this->authorizeForUser($request->user('api'), 'update', Product::class);
         try {
@@ -487,6 +523,8 @@ class ProductsController extends BaseController
                 'unit_id'     => Rule::requiredIf($request->type != 'is_service'),
                 'cost'        => Rule::requiredIf($request->type == 'is_single'),
                 'price'       => Rule::requiredIf($request->type != 'is_variant'),
+                'wholesale_price_percentage'  => Rule::requiredIf($request->type != 'is_service'),
+                'retail_price_percentage'  => Rule::requiredIf($request->type != 'is_service'),
             ];
 
 
@@ -652,6 +690,11 @@ class ProductsController extends BaseController
                  //-- check if type is_single
                  if($request['type'] == 'is_single'){
                     $Product->price = $request['price'];
+                    $Product->label_price = $request['label_price'];
+                    $Product->retail_price_percentage = $request['retail_price_percentage'];
+                    $Product->wholesale_price_percentage = $request['wholesale_price_percentage'];
+                    $Product->wholesale_price = $request['wholesale_price'];
+                    $Product->cost_percentage = $request['cost_percentage'];
                     $Product->cost  = $request['cost'];
 
                     $Product->unit_id = $request['unit_id'];
@@ -681,6 +724,7 @@ class ProductsController extends BaseController
                 //-- check if type is_service
                 }else{
                     $Product->price = $request['price'];
+                    $Product->wholesale_price = $request['wholesale_price'];
                     $Product->cost  = 0;
 
                     $Product->unit_id = NULL;
@@ -744,6 +788,11 @@ class ProductsController extends BaseController
                                 $ProductVariantDT->product_id = $variant['product_id'];
                                 $ProductVariantDT->name = $variant['text'];
                                 $ProductVariantDT->price = $variant['price'];
+                                $ProductVariantDT->label_price = $variant['label_price'];
+                                $ProductVariantDT->retail_price_percentage = $variant['retail_price_percentage'];
+                                $ProductVariantDT->wholesale_price_percentage = $variant['wholesale_price_percentage'];
+                                $ProductVariantDT->wholesale_price = $variant['wholesale_price'];
+                                $ProductVariantDT->cost_percentage = $variant['cost_percentage'];
                                 $ProductVariantDT->cost = $variant['cost'];
                                 $ProductVariantDT->code = $variant['code'];
 
@@ -751,6 +800,11 @@ class ProductsController extends BaseController
                                 $ProductVariantUP['code'] = $variant['code'];
                                 $ProductVariantUP['name'] = $variant['text'];
                                 $ProductVariantUP['price'] = $variant['price'];
+                                $ProductVariantUP['label_price'] = $variant['label_price'];
+                                 $ProductVariantUP['retail_price_percentage'] = $variant['retail_price_percentage'];
+        $ProductVariantUP['wholesale_price_percentage'] = $variant['wholesale_price_percentage'];
+        $ProductVariantUP['wholesale_price'] = $variant['wholesale_price'];
+        $ProductVariantUP['cost_percentage'] = $variant['cost_percentage'];
                                 $ProductVariantUP['cost'] = $variant['cost'];
 
                             } else {
@@ -761,12 +815,22 @@ class ProductsController extends BaseController
                                  $ProductVariantDT->code = $variant['code'];
                                  $ProductVariantDT->name = $variant['text'];
                                  $ProductVariantDT->price = $variant['price'];
+                                 $ProductVariantDT->label_price = $variant['label_price'];
+                                 $ProductVariantDT->retail_price_percentage = $variant['retail_price_percentage'];
+                                 $ProductVariantDT->wholesale_price_percentage = $variant['wholesale_price_percentage'];
+                                 $ProductVariantDT->wholesale_price = $variant['wholesale_price'];    
+                                $ProductVariantDT->cost_percentage = $variant['cost_percentage'];
+
                                  $ProductVariantDT->cost = $variant['cost'];
 
                                  $ProductVariantUP['product_id'] = $id;
                                  $ProductVariantUP['code'] = $variant['code'];
                                  $ProductVariantUP['name'] = $variant['text'];
                                  $ProductVariantUP['price'] = $variant['price'];
+                                  $ProductVariantUP['retail_price_percentage'] = $variant['retail_price_percentage'];
+        $ProductVariantUP['wholesale_price_percentage'] = $variant['wholesale_price_percentage'];
+        $ProductVariantUP['wholesale_price'] = $variant['wholesale_price'];
+        $ProductVariantUP['cost_percentage'] = $variant['cost_percentage'];
                                  $ProductVariantUP['cost'] = $variant['cost'];
                                  $ProductVariantUP['qty'] = 0.00;
                             }
@@ -810,6 +874,12 @@ class ProductsController extends BaseController
                            $ProductVarDT->name = $variant['text'];
                            $ProductVarDT->cost = $variant['cost'];
                            $ProductVarDT->price = $variant['price'];
+                           $ProductVarDT->label_price = $variant['label_price'];
+                           $ProductVariantDT->retail_price_percentage = $variant['retail_price_percentage'];
+                           $ProductVariantDT->wholesale_price_percentage = $variant['wholesale_price_percentage'];
+                           $ProductVariantDT->wholesale_price = $variant['wholesale_price'];  
+                                $ProductVariantDT->cost_percentage = $variant['cost_percentage'];
+
                            $ProductVarDT->save();
 
 
@@ -1005,7 +1075,6 @@ class ProductsController extends BaseController
             $warehouses_id = UserWarehouse::where('user_id', $user_auth->id)->pluck('warehouse_id')->toArray();
             $warehouses = Warehouse::where('deleted_at', '=', null)->whereIn('id', $warehouses_id)->get(['id', 'name']);
         }
-
         $item['id'] = $Product->id;
         $item['type'] = $Product->type;
         $item['code'] = $Product->code;
@@ -1015,10 +1084,16 @@ class ProductsController extends BaseController
         $item['category'] = $Product['category']->name;
         $item['brand'] = $Product['brand'] ? $Product['brand']->name : 'N/D';
         $item['price'] = $Product->price;
+        $item['label_price'] = $Product->label_price;
+        $item['retail_price_percentage'] = $Product->retail_price_percentage;
+        $item['wholesale_price_percentage'] = $Product->wholesale_price_percentage;
+        $item['wholesale_price'] = $Product->wholesale_price;
+        $item['cost_percentage'] = $Product->cost_percentage;
         $item['cost'] = $Product->cost;
         $item['stock_alert'] = $Product->stock_alert;
         $item['taxe'] = $Product->TaxNet;
         $item['tax_method'] = $Product->tax_method == '1' ? 'Exclusive' : 'Inclusive';
+
 
         if($Product->type == 'is_single'){
             $item['type_name']  = 'Single';
@@ -1044,6 +1119,12 @@ class ProductsController extends BaseController
                 $ProductVariant['name'] = $variant->name;
                 $ProductVariant['cost'] = number_format($variant->cost, 2, '.', ',');
                 $ProductVariant['price'] = number_format($variant->price, 2, '.', ',');
+                $ProductVariant['label_price'] = number_format($variant->label_price, 2, '.', ',');
+                $ProductVariant['retail_price_percentage'] = $variant->retail_price_percentage;
+                $ProductVariant['wholesale_price_percentage'] = $variant->wholesale_price_percentage;
+                $ProductVariant['wholesale_price'] = number_format($variant->wholesale_price, 2, '.', ',');
+                $ProductVariant['cost_percentage'] = $variant->cost_percentage;
+                
 
                 $item['products_variants_data'][] = $ProductVariant;
 
@@ -1097,6 +1178,7 @@ class ProductsController extends BaseController
 
     public function Products_by_Warehouse(request $request, $id)
     {
+        // dd("annas");
         $data = [];
         $product_warehouse_data = product_warehouse::with('warehouse', 'product', 'productVariant')
 
@@ -1135,6 +1217,9 @@ class ProductsController extends BaseController
 
 
                 $product_price = $product_warehouse['productVariant']->price;
+                $product_label_price = $product_warehouse['productVariant']->label_price;
+                $product_wholesale_price = $product_warehouse['productVariant']->wholesale_price;
+            
 
             } else {
                 $item['product_variant_id'] = null;
@@ -1144,6 +1229,8 @@ class ProductsController extends BaseController
                 $item['barcode'] = $product_warehouse['product']->code;
 
                 $product_price =  $product_warehouse['product']->price;
+                $product_label_price =  $product_warehouse['product']->label_price;
+                $product_wholesale_price =  $product_warehouse['product']->wholesale_price;
             }
 
             $item['id'] = $product_warehouse->product_id;
@@ -1197,6 +1284,8 @@ class ProductsController extends BaseController
             } else {
                 $item['Net_price'] = $price;
             }
+            $item['label_price'] = $product_label_price;
+$item['wholesale_price'] = $product_wholesale_price;
 
             $data[] = $item;
         }
@@ -1212,134 +1301,299 @@ class ProductsController extends BaseController
     
     
     //------------ Get product By ID -----------------\\
-    public function show_product_data($id , $variant_id)
-    {
+//     public function show_product_data($id , $variant_id)
+//     {
+// // dd($Product_data);
 
-        $Product_data = Product::with('unit')
-            ->where('id', $id)
-            ->where('deleted_at', '=', null)
-            ->first();
+//         $Product_data = Product::with('unit')
+//             ->where('id', $id)
+//             ->where('deleted_at', '=', null)
+//             ->first();
 
-        $data = [];
-        $item['id']           = $Product_data['id'];
-        $item['image']        = $Product_data['image'];
-        $item['product_type'] = $Product_data['type'];
-        $item['Type_barcode'] = $Product_data['Type_barcode'];
+//         $data = [];
+//         $item['id']           = $Product_data['id'];
+//         $item['image']        = $Product_data['image'];
+//         $item['product_type'] = $Product_data['type'];
+//         $item['Type_barcode'] = $Product_data['Type_barcode'];
 
-        $item['unit_id'] = $Product_data['unit']?$Product_data['unit']->id:'';
-        $item['unit']    = $Product_data['unit']?$Product_data['unit']->ShortName:'';
+//         $item['unit_id'] = $Product_data['unit']?$Product_data['unit']->id:'';
+//         $item['unit']    = $Product_data['unit']?$Product_data['unit']->ShortName:'';
 
-        $item['purchase_unit_id'] = $Product_data['unitPurchase']?$Product_data['unitPurchase']->id:'';
-        $item['unitPurchase']     = $Product_data['unitPurchase']?$Product_data['unitPurchase']->ShortName:'';
+//         $item['purchase_unit_id'] = $Product_data['unitPurchase']?$Product_data['unitPurchase']->id:'';
+//         $item['unitPurchase']     = $Product_data['unitPurchase']?$Product_data['unitPurchase']->ShortName:'';
 
-        $item['sale_unit_id'] = $Product_data['unitSale']?$Product_data['unitSale']->id:'';
-        $item['unitSale']     = $Product_data['unitSale']?$Product_data['unitSale']->ShortName:'';
+//         $item['sale_unit_id'] = $Product_data['unitSale']?$Product_data['unitSale']->id:'';
+//         $item['unitSale']     = $Product_data['unitSale']?$Product_data['unitSale']->ShortName:'';
 
-        $item['tax_method']  = $Product_data['tax_method'];
-        $item['tax_percent'] = $Product_data['TaxNet'];
+//         $item['tax_method']  = $Product_data['tax_method'];
+//         $item['tax_percent'] = $Product_data['TaxNet'];
 
-        $item['is_imei']     = $Product_data['is_imei'];
-        $item['not_selling'] = $Product_data['not_selling'];
+//         $item['is_imei']     = $Product_data['is_imei'];
+//         $item['not_selling'] = $Product_data['not_selling'];
 
-        //product single
-        if($Product_data['type'] == 'is_single'){
-            $product_price = $Product_data['price'];
-            $product_cost  = $Product_data['cost'];
+//         //product single
+//         if($Product_data['type'] == 'is_single'){
+//             $product_price = $Product_data['price'];
+//             $product_cost  = $Product_data['cost'];
+//             $product_retail_price_percentage  = $Product_data['retail_price_percentage'];
+//             $product_wholesale_price_percentage = $Product_data['wholesale_price_percentage'];
+//             $product_wholesale_price  = $Product_data['wholesale_price'];
 
-            $item['code'] = $Product_data['code'];
-            $item['name'] = $Product_data['name'];
 
-        //product is_variant
-        }elseif($Product_data['type'] == 'is_variant'){
+//             $item['code'] = $Product_data['code'];
+//             $item['name'] = $Product_data['name'];
 
-            $product_variant_data = ProductVariant::where('product_id', $id)
-            ->where('id', $variant_id)->first();
+//         //product is_variant
+//         }elseif($Product_data['type'] == 'is_variant'){
 
-            $product_price = $product_variant_data['price'];
-            $product_cost  = $product_variant_data['cost'];
-            $item['code'] = $product_variant_data['code'];
-            $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
+//             $product_variant_data = ProductVariant::where('product_id', $id)
+//             ->where('id', $variant_id)->first();
 
-         //product is_service
-        }else{
+//             $product_price = $product_variant_data['price'];
+//             $product_cost  = $product_variant_data['cost'];
+//             $product_retail_price_percentage  = $product_variant_data['retail_price_percentage'];
+//             $product_wholesale_price_percentage  = $product_variant_data['wholesale_price_percentage'];
+//             $product_wholesale_price  = $product_variant_data['wholesale_price'];
+//             $item['code'] = $product_variant_data['code'];
+//             $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
 
-            $product_price = $Product_data['price'];
-            $product_cost  = 0;
+//          //product is_service
+//         }else{
 
-            $item['code'] = $Product_data['code'];
-            $item['name'] = $Product_data['name'];
-        }
+//             $product_price = $Product_data['price'];
+//             $product_cost  = 0;
+
+//             $item['code'] = $Product_data['code'];
+//             $item['name'] = $Product_data['name'];
+//         }
 
        
-        //check if product has Unit sale
-        if ($Product_data['unitSale']) {
+//         //check if product has Unit sale
+//         if ($Product_data['unitSale']) {
 
-            if ($Product_data['unitSale']->operator == '/') {
-                $price = $product_price / $Product_data['unitSale']->operator_value;
+//             if ($Product_data['unitSale']->operator == '/') {
+//                 $price = $product_price / $Product_data['unitSale']->operator_value;
 
-            } else {
-                $price = $product_price * $Product_data['unitSale']->operator_value;
-            }
+//             } else {
+//                 $price = $product_price * $Product_data['unitSale']->operator_value;
+//             }
 
-        }else{
-            $price = $product_price;
+//         }else{
+//             $price = $product_price;
+//         }
+
+//         //check if product has Unit Purchase
+
+//         if ($Product_data['unitPurchase']) {
+
+//             if ($Product_data['unitPurchase']->operator == '/') {
+//                 $cost = $product_cost / $Product_data['unitPurchase']->operator_value;
+//             } else {
+//                 $cost = $product_cost * $Product_data['unitPurchase']->operator_value;
+//             }
+
+//         }else{
+//             $cost = 0;
+//         }
+
+//         $item['Unit_cost'] = $cost;
+//         $item['fix_cost'] = $product_cost;
+//         $item['Unit_price'] = $price;
+//         $item['fix_price'] = $product_price;
+
+//         if ($Product_data->TaxNet !== 0.0) {
+//             //Exclusive
+//             if ($Product_data['tax_method'] == '1') {
+//                 $tax_price = $price * $Product_data['TaxNet'] / 100;
+//                 $tax_cost = $cost * $Product_data['TaxNet'] / 100;
+
+//                 $item['Total_cost'] = $cost + $tax_cost;
+//                 $item['Total_price'] = $price + $tax_price;
+//                 $item['Net_cost'] = $cost;
+//                 $item['Net_price'] = $price;
+//                 $item['tax_price'] = $tax_price;
+//                 $item['tax_cost'] = $tax_cost;
+
+//                 // Inxclusive
+//             } else {
+//                 $item['Total_cost'] = $cost;
+//                 $item['Total_price'] = $price;
+//                 $item['Net_cost'] = $cost / (($Product_data['TaxNet'] / 100) + 1);
+//                 $item['Net_price'] = $price / (($Product_data['TaxNet'] / 100) + 1);
+//                 $item['tax_cost'] = $item['Total_cost'] - $item['Net_cost'];
+//                 $item['tax_price'] = $item['Total_price'] - $item['Net_price'];
+//             }
+//         } else {
+//             $item['Total_cost'] = $cost;
+//             $item['Total_price'] = $price;
+//             $item['Net_cost'] = $cost;
+//             $item['Net_price'] = $price;
+//             $item['tax_price'] = 0;
+//             $item['tax_cost'] = 0;
+//         }
+
+//         $data[] = $item;
+
+//         return response()->json($data[0]);
+//     }
+public function show_product_data($id, $variant_id)
+{
+    //   dd("annas");
+    $Product_data = Product::with('unit')
+        ->where('id', $id)
+        ->where('deleted_at', '=', null)
+        ->first();
+
+    $data = [];
+    $item['id']           = $Product_data['id'];
+    $item['image']        = $Product_data['image'];
+    $item['product_type'] = $Product_data['type'];
+    $item['Type_barcode'] = $Product_data['Type_barcode'];
+
+    $item['unit_id'] = $Product_data['unit']?$Product_data['unit']->id:'';
+    $item['unit']    = $Product_data['unit']?$Product_data['unit']->ShortName:'';
+
+    $item['purchase_unit_id'] = $Product_data['unitPurchase']?$Product_data['unitPurchase']->id:'';
+    $item['unitPurchase']     = $Product_data['unitPurchase']?$Product_data['unitPurchase']->ShortName:'';
+
+    $item['sale_unit_id'] = $Product_data['unitSale']?$Product_data['unitSale']->id:'';
+    $item['unitSale']     = $Product_data['unitSale']?$Product_data['unitSale']->ShortName:'';
+
+    $item['tax_method']  = $Product_data['tax_method'];
+    $item['tax_percent'] = $Product_data['TaxNet'];
+
+    $item['is_imei']     = $Product_data['is_imei'];
+    $item['not_selling'] = $Product_data['not_selling'];
+
+    // Initialize the new fields
+    $item['wholesale_price'] = 0;
+    $item['retail_price'] = 0;
+    $item['retail_price_percentage'] = 0;
+    $item['wholesale_price_percentage'] = 0;
+
+    //product single
+    if($Product_data['type'] == 'is_single'){
+        $product_price = $Product_data['price'];
+        $product_cost  = $Product_data['cost'];
+        
+        // Add the new pricing fields for single product
+        $item['wholesale_price'] = $Product_data['wholesale_price'] ?? 0;
+        $item['retail_price'] = $Product_data['retail_price'] ?? 0;
+        $item['retail_price_percentage'] = $Product_data['retail_price_percentage'] ?? 0;
+        $item['wholesale_price_percentage'] = $Product_data['wholesale_price_percentage'] ?? 0;
+
+        $item['code'] = $Product_data['code'];
+        $item['name'] = $Product_data['name'];
+
+    //product is_variant
+    } elseif($Product_data['type'] == 'is_variant') {
+        $product_variant_data = ProductVariant::where('product_id', $id)
+            ->where('id', $variant_id)->first();
+
+        $product_price = $product_variant_data['price'];
+        $product_cost  = $product_variant_data['cost'];
+        
+        // Add the new pricing fields for variant product
+        $item['wholesale_price'] = $product_variant_data['wholesale_price'] ?? 0;
+        $item['retail_price'] = $product_variant_data['retail_price'] ?? 0;
+        $item['retail_price_percentage'] = $product_variant_data['retail_price_percentage'] ?? 0;
+        $item['wholesale_price_percentage'] = $product_variant_data['wholesale_price_percentage'] ?? 0;
+
+        $item['code'] = $product_variant_data['code'];
+        $item['name'] = '['.$product_variant_data['name'].']'.$Product_data['name'];
+
+    //product is_service
+    } else {
+        $product_price = $Product_data['price'];
+        $product_cost  = 0;
+        
+        // Add the new pricing fields for service product
+        $item['wholesale_price'] = $Product_data['wholesale_price'] ?? 0;
+        $item['retail_price'] = $Product_data['retail_price'] ?? 0;
+        $item['retail_price_percentage'] = $Product_data['retail_price_percentage'] ?? 0;
+        $item['wholesale_price_percentage'] = $Product_data['wholesale_price_percentage'] ?? 0;
+
+        $item['code'] = $Product_data['code'];
+        $item['name'] = $Product_data['name'];
+    }
+
+    //check if product has Unit sale
+    if ($Product_data['unitSale']) {
+        if ($Product_data['unitSale']->operator == '/') {
+            $price = $product_price / $Product_data['unitSale']->operator_value;
+            // Apply unit conversion to wholesale and retail prices
+            $item['wholesale_price'] = $item['wholesale_price'] / $Product_data['unitSale']->operator_value;
+            $item['retail_price'] = $item['retail_price'] / $Product_data['unitSale']->operator_value;
+        } else {
+            $price = $product_price * $Product_data['unitSale']->operator_value;
+            // Apply unit conversion to wholesale and retail prices
+            $item['wholesale_price'] = $item['wholesale_price'] * $Product_data['unitSale']->operator_value;
+            $item['retail_price'] = $item['retail_price'] * $Product_data['unitSale']->operator_value;
         }
+    } else {
+        $price = $product_price;
+    }
 
-        //check if product has Unit Purchase
-
-        if ($Product_data['unitPurchase']) {
-
-            if ($Product_data['unitPurchase']->operator == '/') {
-                $cost = $product_cost / $Product_data['unitPurchase']->operator_value;
-            } else {
-                $cost = $product_cost * $Product_data['unitPurchase']->operator_value;
-            }
-
-        }else{
-            $cost = 0;
+    //check if product has Unit Purchase
+    if ($Product_data['unitPurchase']) {
+        if ($Product_data['unitPurchase']->operator == '/') {
+            $cost = $product_cost / $Product_data['unitPurchase']->operator_value;
+        } else {
+            $cost = $product_cost * $Product_data['unitPurchase']->operator_value;
         }
+    } else {
+        $cost = 0;
+    }
 
-        $item['Unit_cost'] = $cost;
-        $item['fix_cost'] = $product_cost;
-        $item['Unit_price'] = $price;
-        $item['fix_price'] = $product_price;
+    $item['Unit_cost'] = $cost;
+    $item['fix_cost'] = $product_cost;
+    $item['Unit_price'] = $price;
+    $item['fix_price'] = $product_price;
 
-        if ($Product_data->TaxNet !== 0.0) {
-            //Exclusive
-            if ($Product_data['tax_method'] == '1') {
-                $tax_price = $price * $Product_data['TaxNet'] / 100;
-                $tax_cost = $cost * $Product_data['TaxNet'] / 100;
+    if ($Product_data->TaxNet !== 0.0) {
+        //Exclusive
+        if ($Product_data['tax_method'] == '1') {
+            $tax_price = $price * $Product_data['TaxNet'] / 100;
+            $tax_cost = $cost * $Product_data['TaxNet'] / 100;
 
-                $item['Total_cost'] = $cost + $tax_cost;
-                $item['Total_price'] = $price + $tax_price;
-                $item['Net_cost'] = $cost;
-                $item['Net_price'] = $price;
-                $item['tax_price'] = $tax_price;
-                $item['tax_cost'] = $tax_cost;
+            $item['Total_cost'] = $cost + $tax_cost;
+            $item['Total_price'] = $price + $tax_price;
+            $item['Net_cost'] = $cost;
+            $item['Net_price'] = $price;
+            $item['tax_price'] = $tax_price;
+            $item['tax_cost'] = $tax_cost;
 
-                // Inxclusive
-            } else {
-                $item['Total_cost'] = $cost;
-                $item['Total_price'] = $price;
-                $item['Net_cost'] = $cost / (($Product_data['TaxNet'] / 100) + 1);
-                $item['Net_price'] = $price / (($Product_data['TaxNet'] / 100) + 1);
-                $item['tax_cost'] = $item['Total_cost'] - $item['Net_cost'];
-                $item['tax_price'] = $item['Total_price'] - $item['Net_price'];
-            }
+            // Apply tax to wholesale and retail prices if needed
+            $item['wholesale_price_tax'] = $item['wholesale_price'] * $Product_data['TaxNet'] / 100;
+            $item['retail_price_tax'] = $item['retail_price'] * $Product_data['TaxNet'] / 100;
+            
+        // Inclusive
         } else {
             $item['Total_cost'] = $cost;
             $item['Total_price'] = $price;
-            $item['Net_cost'] = $cost;
-            $item['Net_price'] = $price;
-            $item['tax_price'] = 0;
-            $item['tax_cost'] = 0;
+            $item['Net_cost'] = $cost / (($Product_data['TaxNet'] / 100) + 1);
+            $item['Net_price'] = $price / (($Product_data['TaxNet'] / 100) + 1);
+            $item['tax_cost'] = $item['Total_cost'] - $item['Net_cost'];
+            $item['tax_price'] = $item['Total_price'] - $item['Net_price'];
+            
+            // Calculate tax-inclusive wholesale and retail prices
+            $item['wholesale_price_tax'] = $item['wholesale_price'] - ($item['wholesale_price'] / (($Product_data['TaxNet'] / 100) + 1));
+            $item['retail_price_tax'] = $item['retail_price'] - ($item['retail_price'] / (($Product_data['TaxNet'] / 100) + 1));
         }
-
-        $data[] = $item;
-
-        return response()->json($data[0]);
+    } else {
+        $item['Total_cost'] = $cost;
+        $item['Total_price'] = $price;
+        $item['Net_cost'] = $cost;
+        $item['Net_price'] = $price;
+        $item['tax_price'] = 0;
+        $item['tax_cost'] = 0;
+        $item['wholesale_price_tax'] = 0;
+        $item['retail_price_tax'] = 0;
     }
 
+    $data[] = $item;
+    return response()->json($data[0]);
+}
     //--------------  Product Quantity Alerts ---------------\\
 
     public function Products_Alert(request $request)
@@ -1443,7 +1697,7 @@ class ProductsController extends BaseController
 
     public function edit(Request $request, $id)
     {
-
+// dd("annas");
         $this->authorizeForUser($request->user('api'), 'update', Product::class);
 
         $Product = Product::where('deleted_at', '=', null)->findOrFail($id);
@@ -1508,6 +1762,12 @@ class ProductsController extends BaseController
 
         $item['tax_method'] = $Product->tax_method;
         $item['price'] = $Product->price;
+        $item['label_price'] = $Product->label_price;
+        $item['retail_price_percentage']  = $Product->retail_price_percentage;
+        $item['wholesale_price_percentage']  = $Product->wholesale_price_percentage;
+        $item['wholesale_price']  = $Product->wholesale_price;
+        $item['cost_percentage']  = $Product->cost_percentage;
+
         $item['cost'] = $Product->cost;
         $item['stock_alert'] = $Product->stock_alert;
         $item['TaxNet'] = $Product->TaxNet;
@@ -1543,6 +1803,11 @@ class ProductsController extends BaseController
                 $variant_item['code'] = $variant->code;
                 $variant_item['price'] = $variant->price;
                 $variant_item['cost'] = $variant->cost;
+                $variant_item['label_price'] = $variant->label_price;
+                $variant_item['retail_price_percentage'] = $variant->retail_price_percentage;
+                $variant_item['wholesale_price_percentage'] = $variant->wholesale_price_percentage;
+                $variant_item['wholesale_price'] = $variant->wholesale_price;
+                $variant_item['cost_percentage'] = $variant->cost_percentage;
                 $variant_item['product_id'] = $variant->product_id;
                 $item['ProductVariant'][] = $variant_item;
             }

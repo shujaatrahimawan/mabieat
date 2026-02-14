@@ -75,7 +75,20 @@
             </table>
           </div>
         </b-col>
-
+<b-col md="12">
+  <b-form-group :label="$t('Select Price Label Type')">
+<v-select
+  v-model="selectedPriceType"
+  :reduce="label => label.value"
+  :placeholder="$t('ChoosePrice')"
+  :options="[
+    { label: $t('LabelPrice'), value: 'label_price' },
+    { label: $t('WholesalePrice'), value: 'wholesale_price' },
+    { label: $t('RetailPrice'), value: 'retail_price' }
+  ]"
+/>
+  </b-form-group>
+</b-col>
          <!-- Paper_size  -->
           <b-col md="12">
             <b-form-group :label="$t('Paper_size')">
@@ -94,6 +107,7 @@
                         {label: '14 per sheet (4 * 1.33)', value: 'style14'},
                         {label: '12 per sheet (a4) (2.5 * 2.834)', value: 'style12'},
                         {label: '10 per sheet (4 * 2)', value: 'style10'},
+                        { label: 'BlackCopper BC-LP1300 (90mm x 19mm)', value: 'blackcopper_lp1300' },
                       ]"
               ></v-select>
             </b-form-group>
@@ -123,7 +137,7 @@
               <div class="barcode-row" v-if="ShowCard" id="print_barcode_label">
                 <div :class="class_type_page" v-for ="(k, i) in total_a4" :key="i">
                   <div class="barcode-item" :class="class_sheet"  v-for="(sheet, index) in sheets" :key="index" >
-                    <div class="head_barcode text-left" style=" padding-left: 10px;font-weight: bold; ">
+                    <div class="head_barcode" style=" padding-left: 0px;font-weight: bold; ">
                       <span class="barcode-name">{{product.name}}</span>
                       <span class="barcode-price">{{currentUser.currency}} {{product.Net_price}}</span>
                     </div>
@@ -141,7 +155,7 @@
                 </div>
                 <div :class="class_type_page"  v-if="rest > 0">
                   <div class="barcode-item" :class="class_sheet"  v-for="(sheet, index) in rest" :key="index" >
-                    <div class="head_barcode text-left" style=" padding-left: 10px;font-weight: bold; ">
+                    <div class="head_barcode" style=" padding-left: 0px;font-weight: bold; ">
                       <span class="barcode-name">{{product.name}}</span>
                       <span class="barcode-price">{{currentUser.currency}} {{product.Net_price}}</span>
                     </div>
@@ -181,6 +195,7 @@ export default {
       product_filter:[],
       isLoading: true,
       ShowCard: false,
+       selectedPriceType: 'retail_price', 
       barcode: {
         product_id: "",
         warehouse_id: "",
@@ -201,6 +216,9 @@ export default {
         code: "",
         Type_barcode: "",
         barcode:"",
+         label_price: "",      
+  wholesale_price: "", 
+  retail_price:"",
         Net_price:"",
       }
     };
@@ -209,8 +227,27 @@ export default {
   computed: {
     ...mapGetters(["currentUser"])
   },
+      watch: {
+  selectedPriceType(newVal) {
+    this.updateDisplayPrice();
+  }
+},
 
   methods: {
+updateDisplayPrice() {
+  if (!this.product.code) return;
+  if (this.selectedPriceType === 'wholesale_price') {
+    this.product.Net_price = this.product.wholesale_price;
+  } else if (this.selectedPriceType === 'label_price') {
+    this.product.Net_price = this.product.label_price;
+  } else {
+    this.product.Net_price = this.product.retail_price;
+  }
+
+  console.log('Display Price:', this.product.Net_price);
+},
+
+
     Per_Page(){
       this.total_a4 = parseInt(this.barcode.qte/this.sheets);
       this.rest = this.barcode.qte%this.sheets;
@@ -238,7 +275,7 @@ export default {
         this.class_sheet = 'style18';
         this.class_type_page = 'barcodea4';
       }else if(value == 'style14'){
-        this.sheets = 14;
+        this.sheets = 24;
         this.class_sheet = 'style14';
         this.class_type_page = 'barcode_non_a4';
       }else if(value == 'style12'){
@@ -250,9 +287,15 @@ export default {
         this.class_sheet = 'style10';
        this.class_type_page = 'barcode_non_a4';
       }
+else if (value == 'blackcopper_lp1300') {
+  this.sheets = 12;
+  this.class_type_page = 'barcode_roll';       // outer div
+  this.class_sheet = 'blackcopper_lp1300';     // inner label div
+}
      
       this.Per_Page();
     },
+
     //------ Validate Form
     submit() {
       this.$refs.show_Barcode.validate().then(success => {
@@ -322,8 +365,17 @@ export default {
         this.product.barcode = result.barcode;
         this.product.name = result.name;
         this.product.Type_barcode = result.Type_barcode;
-        this.product.Net_price = result.Net_price;
-      }
+          // Store all price types
+     // Store original prices from API
+    this.product.label_price = result.label_price;
+    this.product.wholesale_price = result.wholesale_price;
+    this.product.retail_price = result.Net_price; // ✅ retail comes from Net_price
+
+  // Set initial price based on selected type
+    this.updateDisplayPrice();
+
+  }
+      
       this.search_input= '';
       this.$refs.product_autocomplete.value = "";
       this.product_filter = [];
@@ -336,6 +388,8 @@ export default {
         solid: true
       });
     },
+
+
     //------------------------------------ Get Products By Warehouse -------------------------\\
     Get_Products_By_Warehouse(id) {
       // Start the progress bar.
@@ -413,6 +467,7 @@ export default {
   //-----------------------------Created function-------------------
   created: function() {
     this.Get_Elements();
+    //  this.selectedPriceType = 'label_price';
   }
 };
 </script>

@@ -262,6 +262,9 @@ class PosController extends BaseController
     public function GetProductsByParametre(request $request)
     {
         $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
+        $user = $request->user('api');
+
+        $userType = $user->type;
         // How many items do you want to display.
         $perPage = 8;
         $pageStart = \Request::get('page', 1);
@@ -326,7 +329,9 @@ class PosController extends BaseController
                 $item['code'] = $productsVariants->code;
                 $item['barcode'] = $productsVariants->code;
 
-                $product_price = $product_warehouse['productVariant']->price;
+                $product_price = ($userType === 'Wholesale')
+                ? $product_warehouse['productVariant']->wholesale_price   // assume column exists
+                : $product_warehouse['productVariant']->price;
 
             } else {
                 $item['product_variant_id'] = null;
@@ -335,7 +340,9 @@ class PosController extends BaseController
                 $item['name'] = $product_warehouse['product']->name;
                 $item['barcode'] = $product_warehouse['product']->code;
 
-                $product_price =  $product_warehouse['product']->price;
+                $product_price = ($userType === 'Wholesale')
+                ? $product_warehouse['product']->wholesale_price   // assume column exists
+                : $product_warehouse['product']->price;
 
             }
             $item['id'] = $product_warehouse->product_id;

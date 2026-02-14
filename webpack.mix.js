@@ -1,4 +1,6 @@
 const mix = require('laravel-mix');
+const WebpackNotifierPlugin = require('webpack-notifier');
+
 
 
 /*
@@ -30,5 +32,7 @@ mix.js('resources/src/main.js', 'public').js('resources/src/login.js', 'public')
             new CleanWebpackPlugin({
                 cleanOnceBeforeBuildPatterns: ['./js/*']
               }),
+               new WebpackNotifierPlugin({ alwaysNotify: true }),
         ]
     });
+    mix.disableNotifications(false); 

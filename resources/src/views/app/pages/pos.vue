@@ -579,7 +579,7 @@
                 </div>
                 </b-col>
 
-              <div class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2">
+             <div class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2">
                 <div
                   @click="Check_Product_Exist(product , product.id)"
                   v-for="product in products"
@@ -609,7 +609,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> 
             </b-row>
             <b-row>
               <b-col md="12" class="mt-4">
@@ -1441,6 +1441,8 @@ export default {
   mounted() {
     this.changeSidebarProperties();
     this.paginate_products(this.product_perPage, 0);
+      console.log("Current User:", this.currentUser.type);
+
   },
   methods: {
     ...mapActions(["changeSidebarProperties", "changeThemeMode", "logout"]),
@@ -2116,14 +2118,22 @@ export default {
     //---------------------------------Get Product Details ------------------------\\
     Get_Product_Details(product_id, variant_id) {
        axios.get("/show_product_data/" + product_id +"/"+ variant_id).then(response => {
+        console.log('Product Response:', response.data);
         this.product.discount           = 0;
         this.product.DiscountNet        = 0;
         this.product.discount_Method    = "2";
         this.product.product_id         = response.data.id;
         this.product.product_type       = response.data.product_type;
         this.product.name               = response.data.name;
-        this.product.Net_price          = response.data.Net_price;
+ if (this.currentUser.type === "Wholesale") {
+  this.product.Net_price = response.data.wholesale_price;
+  this.product.Total_price = response.data.wholesale_price;
+} else {
         this.product.Total_price        = response.data.Total_price;
+
+  this.product.Net_price = response.data.Net_price;
+}
+       
         this.product.Unit_price         = response.data.Unit_price;
         this.product.taxe               = response.data.tax_price;
         this.product.tax_method         = response.data.tax_method;
@@ -2144,26 +2154,62 @@ export default {
     },
     //----------- Calcul Total
     CaclulTotal() {
-      this.total = 0;
-      for (var i = 0; i < this.details.length; i++) {
-        var tax = this.details[i].taxe * this.details[i].quantity;
-        this.details[i].subtotal = parseFloat(
-          this.details[i].quantity * this.details[i].Net_price + tax
-        );
-        this.total = parseFloat(this.total + this.details[i].subtotal);
-      }
-      const total_without_discount = parseFloat(
-        this.total - this.sale.discount
-      );
-      this.sale.TaxNet = parseFloat(
-        (total_without_discount * this.sale.tax_rate) / 100
-      );
-      this.GrandTotal = parseFloat(
-        total_without_discount + this.sale.TaxNet + this.sale.shipping
-      );
-      var grand_total =  this.GrandTotal.toFixed(2);
-      this.GrandTotal = parseFloat(grand_total);
-    },
+  this.total = 0;
+  for (var i = 0; i < this.details.length; i++) {
+    // decide price based on user type
+    let price = this.details[i].Total_price;
+      // this.currentUser.type === "Wholesale"
+      //   ? this.details[i].wholesale_price
+      //   : this.details[i].Net_price;
+
+    // tax per item
+    var tax = this.details[i].taxe * this.details[i].quantity;
+
+    // subtotal = (price * qty) + tax
+    this.details[i].subtotal = parseFloat(
+      this.details[i].quantity * price + tax
+    );
+
+    // accumulate total
+    this.total = parseFloat(this.total + this.details[i].subtotal);
+  }
+
+  const total_without_discount = parseFloat(
+    this.total - this.sale.discount
+  );
+
+  this.sale.TaxNet = parseFloat(
+    (total_without_discount * this.sale.tax_rate) / 100
+  );
+
+  this.GrandTotal = parseFloat(
+    total_without_discount + this.sale.TaxNet + this.sale.shipping
+  );
+
+  this.GrandTotal = parseFloat(this.GrandTotal.toFixed(2));
+},
+
+    // CaclulTotal() {
+    //   this.total = 0;
+    //   for (var i = 0; i < this.details.length; i++) {
+    //     var tax = this.details[i].taxe * this.details[i].quantity;
+    //     this.details[i].subtotal = parseFloat(
+    //       this.details[i].quantity * this.details[i].Net_price + tax
+    //     );
+    //     this.total = parseFloat(this.total + this.details[i].subtotal);
+    //   }
+    //   const total_without_discount = parseFloat(
+    //     this.total - this.sale.discount
+    //   );
+    //   this.sale.TaxNet = parseFloat(
+    //     (total_without_discount * this.sale.tax_rate) / 100
+    //   );
+    //   this.GrandTotal = parseFloat(
+    //     total_without_discount + this.sale.TaxNet + this.sale.shipping
+    //   );
+    //   var grand_total =  this.GrandTotal.toFixed(2);
+    //   this.GrandTotal = parseFloat(grand_total);
+    // },
     //-------Verified QTY
     Verified_Qty(detail, id) {
       for (var i = 0; i < this.details.length; i++) {

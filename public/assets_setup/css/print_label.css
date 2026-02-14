@@ -7,7 +7,14 @@
 	.barcode_non_a4 , .barcode_non_a4 .barcode-item, .barcodea4 , .barcodea4 .barcode-item{
 		border: none!important;
 	}
+	  .barcode_roll {
+    width: 100%;
+  }
+  .blackcopper_lp1300 {
+    page-break-inside: avoid;
+  }
 }
+
 
 .barcodea4{
     width: 8.25in;
@@ -30,34 +37,42 @@
 }
 
 .barcode_non_a4 .barcode-item {
-	display: block;
+	/* display: block;
 	overflow: hidden;
 	text-align: center;
 	border: 1px dotted #CCC;
 	font-size: 12px;
 	line-height: 14px;
 	text-transform: uppercase;
-	float: left;
+	float: left; */
+	/* width:30%;
+	text-align: center; */
+	 width: 33.3333%;
+  box-sizing: border-box;
+  padding: 5px;
 } 
 
 .barcode_non_a4 .head_barcode{
 	padding-left: 10px;
 	font-weight: bold;
-	text-align: left;
+	text-align: center;
+	font-size: 12px !important;
+	/* text-align: left; */
 }
 
 .barcodea4 .head_barcode{
 	padding-left: 10px;
 	font-weight: bold;
-	text-align: left;
+	text-align: center;
+	/* text-align: left; */
 }
 
 .barcode-name{
-	display: block;
+	display: inline-block;
 }
 
 .barcode-price{
-	display: block;
+	display: inline-block;
 }
 
 .barcodea4 .style24 .head_barcode{
@@ -155,5 +170,54 @@
 	font-size: 14px;
 	line-height: 20px;
 } 
+.barcode_roll {
+  display: grid;
+  grid-template-columns: repeat(3, 1.2in); 
+  /*grid-auto-rows: 1in;*/
+  justify-content: start;       /* ← Ensures content starts from left */
+  align-items: start;
+  gap: 0;
 
+  margin: 0 !important;         /* ← Removes left gap */
+  padding: 0 !important;        /* ← Removes inner padding */
+  box-sizing: border-box;
+  width: auto;
+}
+.head_barcode {
+    z-index: 1;
+    margin-top: -6px;
+}
+.barcode {
+    margin-top: -11px;
+}
+/* SINGLE LABEL: 1.2in x 1in */
+.blackcopper_lp1300 {
+  /*width: 1.2in;*/
+  /*height: 1in;*/
+  box-sizing: border-box;
+  /* padding: 1px;               small padding inside the sticker */
+  border: 1px dashed #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  text-align: center;
+}
+/* MAKE TEXT SMALLER */
+.blackcopper_lp1300 .barcode-name {
+  font-size: 9px;       /* 🔽 smaller product name */
+  line-height: 1.1;
+  font-weight: bold;
+}
+
+.blackcopper_lp1300 .barcode-price {
+  font-size: 9px;       /* 🔽 smaller price font */
+  line-height: 1.1;
+  font-weight: bold;
+}
+
+/* Optional: keep barcode-item neutral */
+.barcode-item {
+  margin: 0;
+  padding: 0;
+}
 	
