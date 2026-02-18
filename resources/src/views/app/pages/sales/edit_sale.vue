@@ -1023,7 +1023,11 @@ export default {
     //---------------------------------Get Product Details ------------------------\\
 
     Get_Product_Details(product_id, variant_id) {
+     
       axios.get("/show_product_data/" + product_id +"/"+ variant_id).then(response => {
+        
+        let userType=response.data.user_type=="Wholesale"?true:false;
+        
         this.product.del = 0;
         this.product.id = 0;
         this.product.etat = "new";
@@ -1033,8 +1037,8 @@ export default {
         this.product.product_id = response.data.id;
         this.product.name = response.data.name;
         this.product.product_type = response.data.product_type;
-        this.product.Net_price = response.data.Net_price;
-        this.product.Unit_price = response.data.Unit_price;
+        this.product.Net_price = userType==true?response.data.wholesale_price:response.data.Net_price;
+        this.product.Unit_price =userType==true?response.data.wholesale_price: response.data.Unit_price;
         this.product.taxe = response.data.tax_price;
         this.product.tax_method = response.data.tax_method;
         this.product.tax_percent = response.data.tax_percent;

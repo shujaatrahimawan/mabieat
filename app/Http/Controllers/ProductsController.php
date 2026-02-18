@@ -1438,13 +1438,18 @@ $item['wholesale_price'] = $product_wholesale_price;
 //     }
 public function show_product_data($id, $variant_id)
 {
-    //   dd("annas");
+   
+
+    $user_type = auth()->user()->toArray()["type"];
+ 
     $Product_data = Product::with('unit')
         ->where('id', $id)
         ->where('deleted_at', '=', null)
         ->first();
 
     $data = [];
+    $item['user_type']           = $user_type;
+
     $item['id']           = $Product_data['id'];
     $item['image']        = $Product_data['image'];
     $item['product_type'] = $Product_data['type'];
@@ -1590,8 +1595,9 @@ public function show_product_data($id, $variant_id)
         $item['wholesale_price_tax'] = 0;
         $item['retail_price_tax'] = 0;
     }
-
+    
     $data[] = $item;
+  
     return response()->json($data[0]);
 }
     //--------------  Product Quantity Alerts ---------------\\
