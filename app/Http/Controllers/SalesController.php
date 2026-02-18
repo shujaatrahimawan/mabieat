@@ -52,6 +52,7 @@ class SalesController extends BaseController
     public function index(request $request)
     {
         $this->authorizeForUser($request->user('api'), 'view', Sale::class);
+        // dd(Auth::user()->toArray());
         $role = Auth::user()->roles()->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         // How many items do you want to display.
@@ -114,6 +115,13 @@ class SalesController extends BaseController
                         });
                 });
             });
+
+            //  filter by logged-in user's type 
+        $user_type = Auth::user()->type;
+
+        $Filtred = $Filtred->whereHas('user', function ($q) use ($user_type) {
+            $q->where('type', $user_type);
+        });
 
         $totalRows = $Filtred->count();
         if($perPage == "-1"){
@@ -888,6 +896,18 @@ class SalesController extends BaseController
             } else {
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
+            }
+
+            if ($detail->discount_method == '2') {
+                // Fixed amount
+                $data['DiscountNet'] = $detail->discount;
+                $data['discount_percent'] = $detail->price > 0 
+                    ? round(($detail->discount / $detail->price) * 100, 2) 
+                    : 0;
+            } else {
+                // Percentage
+                $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+                $data['discount_percent'] = $detail->discount;
             }
 
             $data['quantity'] = $detail->quantity;

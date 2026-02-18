@@ -52,8 +52,8 @@
 
           <!-- ── COMPANY TITLE ── -->
           <div class="inv-title-row">
-            <h4 class="inv-title">{{ company.CompanyName }}</h4>
-            <div class="inv-title">DSP Chowk, Ghalwa Road Alipur.</div>
+            <h4 class="inv-title">{{ company.CompanyName }} DSP Chowk, Alipur.</h4>
+            <!-- <div class="inv-title"></div> -->
           </div>
 
           <hr class="inv-hr" />
@@ -71,7 +71,7 @@
             <!-- Customer Info -->
             <b-col lg="3" md="3" sm="12" class="mb-4">
               <h5 class="info-heading">{{ $t('Customer_Info') }}</h5>
-              <div>{{ sale.client_name }}</div>
+              <div><b>{{ sale.client_name }}</b></div>
               <div>{{ sale.client_email }}</div>
               <div>{{ sale.client_phone }}</div>
               <div>{{ sale.client_adr }}</div>
@@ -119,13 +119,14 @@
                   <thead class="bg-gray-300">
                     <tr>
                       <th scope="col">{{ $t('ProductName') }}</th>
+                      <th scope="col">{{ $t('Quantity') }}</th>
                       <th scope="col">{{ $t('UnitPrice') }}</th>
 
-                      <th scope="col">{{ $t('Quantity') }}</th>
+              
                       <th scope="col">{{ $t('Net_Unit_Price') }}</th>
 
                       <th scope="col">{{ $t('Discount') }}</th>
-                      <th scope="col">{{ $t('Tax') }}</th>
+                      <!-- <th scope="col">{{ $t('Tax') }}</th> -->
                       <th scope="col">{{ $t('SubTotal') }}</th>
                     </tr>
                   </thead>
@@ -139,13 +140,16 @@
                           {{ $t('IMEI_SN') }} : {{ detail.imei_number }}
                         </p>
                       </td>
-                      <td>{{ currentUser.currency }} {{ formatNumber(detail.price, 2) }}</td>
                       <td>{{ formatNumber(detail.quantity, 2) }} {{ detail.unit_sale }}</td>
+
+                      <td>{{ currentUser.currency }} {{ formatNumber(detail.price, 2) }}</td>
                       <td>{{ currentUser.currency }} {{ formatNumber(detail.Net_price, 3) }}</td>
 
 
-                      <td>{{ currentUser.currency }} {{ formatNumber(detail.DiscountNet, 2) }}</td>
-                      <td>{{ currentUser.currency }} {{ formatNumber(detail.taxe, 2) }}</td>
+                      <!-- <td>{{ currentUser.currency }} {{ formatNumber(detail.DiscountNet, 2) }}</td> -->
+                      <td> {{ formatNumber(detail.discount_percent,0) }}%</td>
+
+                      <!-- <td>{{ currentUser.currency }} {{ formatNumber(detail.taxe, 2) }}</td> -->
                       <td>{{ currentUser.currency }} {{ detail.total.toFixed(2) }}</td>
                     </tr>
                   </tbody>
@@ -157,12 +161,12 @@
             <div class="offset-md-9 col-md-3 mt-4">
               <table class="table table-striped table-sm">
                 <tbody>
-                  <tr>
+                  <!-- <tr>
                     <td>{{ $t('OrderTax') }}</td>
                     <td>
                       <span>{{ currentUser.currency }} {{ sale.TaxNet.toFixed(2) }} ({{ formatNumber(sale.tax_rate, 2) }} %)</span>
                     </td>
-                  </tr>
+                  </tr> -->
                   <tr>
                     <td>{{ $t('Discount') }}</td>
                     <td>{{ currentUser.currency }} {{ sale.discount.toFixed(2) }}</td>
@@ -455,7 +459,7 @@ export default {
 
 .inv-title {
   font-family: 'Playfair Display', serif;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 700;
   color: var(--accent);
   letter-spacing: 0.05em;
