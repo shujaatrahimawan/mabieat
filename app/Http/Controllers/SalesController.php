@@ -860,6 +860,40 @@ class SalesController extends BaseController
         $sale_details['due'] = number_format($sale_details['GrandTotal'] - $sale_details['paid_amount'], 2, '.', '');
         $sale_details['payment_status'] = $sale_data->payment_statut;
 
+        // Get previous dues from other sales for the same client
+        $client_id = $sale_data->client_id;
+        $previous_due = 0;
+        $previous_dues_details = [];
+        
+        // Fetch all previous unpaid/partial sales for the same client (excluding current sale)
+        $previous_sales = Sale::where('client_id', $client_id)
+            ->where('id', '!=', $id)
+            ->where('deleted_at', '=', null)
+            ->where(function($query) {
+                $query->where('payment_statut', '!=', 'paid')
+                      ->orWhereRaw('GrandTotal > paid_amount');
+            })
+            ->orderBy('date', 'asc')
+            ->get();
+        
+        foreach ($previous_sales as $prev_sale) {
+            $prev_due = $prev_sale->GrandTotal - $prev_sale->paid_amount;
+            if ($prev_due > 0) {
+                $previous_due += $prev_due;
+                $previous_dues_details[] = [
+                    'id' => $prev_sale->id,
+                    'Ref' => $prev_sale->Ref,
+                    'date' => $prev_sale->date,
+                    'GrandTotal' => number_format($prev_sale->GrandTotal, 2, '.', ''),
+                    'paid_amount' => number_format($prev_sale->paid_amount, 2, '.', ''),
+                    'due' => number_format($prev_due, 2, '.', '')
+                ];
+            }
+        }
+        
+        $sale_details['previous_due'] = number_format($previous_due, 2, '.', '');
+        $sale_details['previous_dues_details'] = $previous_dues_details;
+
         if (SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->exists()) {
             $sellReturn = SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->first();
             $sale_details['salereturn_id'] = $sellReturn->id;

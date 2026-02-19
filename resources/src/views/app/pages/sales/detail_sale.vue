@@ -200,6 +200,39 @@
 
           </b-row>
 
+          <!-- ── PREVIOUS DUES SECTION ── -->
+          <div v-if="previous_dues_details && previous_dues_details.length > 0" class="mt-4">
+            <h5 class="info-heading text-danger">Previous Dues (From Previous Sales)</h5>
+            <div class="table-responsive">
+              <table class="table table-hover table-sm table-bordered">
+                <thead class="bg-gray-300">
+                  <tr>
+                    <th scope="col">Sr No.</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Reference</th>
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Paid</th>
+                    <th scope="col">Due</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(prevDue, index) in previous_dues_details" :key="index">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ prevDue.date }}</td>
+                    <td>{{ prevDue.Ref }}</td>
+                    <td>{{ currentUser.currency }} {{ prevDue.GrandTotal }}</td>
+                    <td>{{ currentUser.currency }} {{ prevDue.paid_amount }}</td>
+                    <td class="text-danger font-weight-bold">{{ currentUser.currency }} {{ prevDue.due }}</td>
+                  </tr>
+                  <tr class="bg-light">
+                    <td colspan="5" class="text-right font-weight-bold">Total Previous Dues:</td>
+                    <td class="text-danger font-weight-bold">{{ currentUser.currency }} {{ previous_due }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- ── NOTE ── -->
           <hr v-show="sale.note" />
           <b-row class="mt-4">
@@ -235,6 +268,8 @@ export default {
       details: [],
       variants: [],
       company: {},
+      previous_due: 0,
+      previous_dues_details: [],
       email: {
         to: "",
         subject: "",
@@ -380,6 +415,8 @@ export default {
           this.sale = response.data.sale;
           this.details = response.data.details;
           this.company = response.data.company;
+          this.previous_due = response.data.sale.previous_due || 0;
+          this.previous_dues_details = response.data.sale.previous_dues_details || [];
           this.isLoading = false;
         })
         .catch(response => {
