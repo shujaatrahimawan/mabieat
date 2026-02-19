@@ -118,21 +118,25 @@
                 <table class="table table-hover table-md">
                   <thead class="bg-gray-300">
                     <tr>
+                      <th scope="col">Sr no.</th> <!-- Serial Number -->
+
                       <th scope="col">{{ $t('ProductName') }}</th>
                       <th scope="col">{{ $t('Quantity') }}</th>
                       <th scope="col">{{ $t('UnitPrice') }}</th>
 
-              
+                      <th scope="col">{{ $t('Discount') }}</th>
                       <th scope="col">{{ $t('Net_Unit_Price') }}</th>
 
-                      <th scope="col">{{ $t('Discount') }}</th>
+              
                       <!-- <th scope="col">{{ $t('Tax') }}</th> -->
                       <th scope="col">{{ $t('SubTotal') }}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="detail in details" :key="detail.code">
+                    <tr v-for="(detail, index)  in details" :key="detail.code">
+                      <td>{{ index + 1 }}</td> 
                       <td>
+
                         <!-- <span>{{ detail.code }} ({{ detail.name }})</span> -->
                         <span>{{ detail.name }}</span>
 
@@ -143,11 +147,14 @@
                       <td>{{ formatNumber(detail.quantity, 2) }} {{ detail.unit_sale }}</td>
 
                       <td>{{ currentUser.currency }} {{ formatNumber(detail.price, 2) }}</td>
+                      
+                      <td> {{ formatNumber(detail.discount_percent,0) }}%</td>
                       <td>{{ currentUser.currency }} {{ formatNumber(detail.Net_price, 3) }}</td>
 
 
+
                       <!-- <td>{{ currentUser.currency }} {{ formatNumber(detail.DiscountNet, 2) }}</td> -->
-                      <td> {{ formatNumber(detail.discount_percent,0) }}%</td>
+                 
 
                       <!-- <td>{{ currentUser.currency }} {{ formatNumber(detail.taxe, 2) }}</td> -->
                       <td>{{ currentUser.currency }} {{ detail.total.toFixed(2) }}</td>
