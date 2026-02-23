@@ -281,6 +281,10 @@ export default {
         )
         .then(response => {
           this.warehouses = response.data.warehouses;
+           //  If only one warehouse, auto select it
+           if (this.warehouses.length === 1) {
+            this.warehouse_id = this.warehouses[0].id;
+          }
           this.products = response.data.products;
           this.totalRows = response.data.totalRows;
           // Complete the animation of theprogress bar.

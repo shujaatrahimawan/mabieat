@@ -246,6 +246,10 @@ export default {
           this.reports = response.data.report;
           this.totalRows = response.data.totalRows;
           this.warehouses = response.data.warehouses;
+           //  If only one warehouse, auto select it
+          if (this.warehouses.length === 1) {
+            this.warehouse_id = this.warehouses[0].id;
+          }
           // Complete the animation of theprogress bar.
           NProgress.done();
           this.isLoading = false;

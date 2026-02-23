@@ -1541,6 +1541,11 @@ export default {
         .then(response => {
           this.clients = response.data.clients;
           this.warehouses = response.data.warehouses;
+          // ✅ Auto select if only one warehouse
+          if (this.warehouses.length === 1) {
+            this.sale.warehouse_id = this.warehouses[0].id;
+            this.Get_Products_By_Warehouse(this.warehouses[0].id);
+          }
           this.stripe_key = response.data.stripe_key;
           this.isLoading = false;
         })

@@ -775,15 +775,16 @@
             <div style="max-width:400px;margin:0px auto">
               <div class="info">
                 <div class="invoice_logo text-center mb-2">
-                  <img :src="'/images/'+invoice_pos.setting.logo" alt width="60" height="60">
+                  <img :src="'/images/'+invoice_pos.setting.logo" alt width="100" height="100">
                 </div>
+                <h2 class="text-center mb-0">Tayyab Book Center</h2>
                 <p>
                   <span>{{$t('date')}} : {{invoice_pos.sale.date}} <br></span>
                   <span v-show="pos_settings.show_address">{{$t('Adress')}} : {{invoice_pos.setting.CompanyAdress}} <br></span>
                   <span v-show="pos_settings.show_email">{{$t('Email')}} : {{invoice_pos.setting.email}} <br></span>
                   <span v-show="pos_settings.show_phone">{{$t('Phone')}} : {{invoice_pos.setting.CompanyPhone}} <br></span>
                   <span v-show="pos_settings.show_customer">{{$t('Customer')}} : {{invoice_pos.sale.client_name}} <br></span>
-                  <span v-show="pos_settings.show_Warehouse">{{$t('warehouse')}} : {{invoice_pos.sale.warehouse_name}} <br></span>
+                  <!-- <span v-show="pos_settings.show_Warehouse">{{$t('warehouse')}} : {{invoice_pos.sale.warehouse_name}} <br></span> -->
                 </p>
               </div>
 
@@ -2549,6 +2550,10 @@ export default {
         .then(response => {
           this.clients = response.data.clients;
           this.warehouses = response.data.warehouses;
+          //  If only one warehouse, auto select it
+          if (this.warehouses.length === 1) {
+            this.warehouse_id = this.warehouses[0].id;
+          }
           this.categories = response.data.categories;
           this.brands = response.data.brands;
           this.sale.warehouse_id = response.data.defaultWarehouse;

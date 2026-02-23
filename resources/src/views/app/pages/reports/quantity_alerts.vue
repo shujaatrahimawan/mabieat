@@ -196,6 +196,10 @@ export default {
         .then(response => {
           this.products = response.data.products.data;
           this.warehouses = response.data.warehouses;
+           //  If only one warehouse, auto select it
+           if (this.warehouses.length === 1) {
+            this.warehouse_id = this.warehouses[0].id;
+          }
           this.totalRows = response.data.products.total;
           // Complete the animation of theprogress bar.
           NProgress.done();

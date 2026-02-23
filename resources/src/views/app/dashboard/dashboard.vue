@@ -417,6 +417,10 @@ export default {
 
           this.report_today = response.data.report_dashboard.original.report;
           this.warehouses = response.data.warehouses;
+          // If only one warehouse, auto select it
+          if (this.warehouses.length === 1) {
+            this.warehouse_id = this.warehouses[0].id;
+          }
           this.stock_alerts =
             response.data.report_dashboard.original.stock_alert;
           this.products = response.data.report_dashboard.original.products;
