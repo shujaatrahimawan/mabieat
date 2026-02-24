@@ -441,6 +441,17 @@ else if (value == 'blackcopper_lp1300') {
         .get("barcode_create_page")
         .then(response => {
           this.warehouses = response.data.warehouses;
+
+           // Auto select warehouse if only one exists
+          if (this.warehouses.length === 1) {
+            const warehouse = this.warehouses[0];
+
+            this.barcode.warehouse_id = warehouse.id;
+
+            // Auto load products for this warehouse
+            this.Selected_Warehouse(warehouse.id);
+          }
+
           this.isLoading = false;
         })
         .catch(response => {

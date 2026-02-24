@@ -1073,6 +1073,17 @@ export default {
         .then(response => {
           this.clients = response.data.clients;
           this.warehouses = response.data.warehouses;
+
+                // ✅ Auto select warehouse if only one exists
+            if (this.warehouses.length === 1) {
+              const warehouse = this.warehouses[0];
+
+              // Set warehouse in quote object
+              this.quote.warehouse_id = warehouse.id;
+
+              // Automatically load products
+              this.Selected_Warehouse(warehouse.id);
+            }
           this.quotation_with_stock = response.data.quotation_with_stock;
           this.isLoading = false;
         })

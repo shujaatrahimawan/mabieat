@@ -533,6 +533,16 @@ export default {
         .get("adjustments/create")
         .then(response => {
           this.warehouses = response.data.warehouses;
+
+           // Auto select if only one warehouse
+            if (this.warehouses.length === 1) {
+              const warehouse = this.warehouses[0];
+              this.adjustment.warehouse_id = warehouse.id;
+
+              // Load products automatically
+              this.Selected_Warehouse(warehouse.id);
+            }
+
           this.isLoading = false;
         })
         .catch(response => {

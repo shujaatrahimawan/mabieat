@@ -1223,6 +1223,17 @@ updateRetailPrice() {
         .then(response => {
           this.suppliers = response.data.suppliers;
           this.warehouses = response.data.warehouses;
+
+           // ✅ Auto select warehouse if only one exists
+      if (this.warehouses.length === 1) {
+        const warehouse = this.warehouses[0];
+
+        // Set warehouse id
+        this.purchase.warehouse_id = warehouse.id;
+
+        // Automatically load products for this warehouse
+        this.Selected_Warehouse(warehouse.id);
+      }
           this.isLoading = false;
         })
         .catch(response => {

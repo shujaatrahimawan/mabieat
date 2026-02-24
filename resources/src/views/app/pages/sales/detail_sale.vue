@@ -201,7 +201,7 @@
           </b-row>
 
           <!-- ── PREVIOUS DUES SECTION ── -->
-          <div v-if="previous_dues_details && previous_dues_details.length > 0" class="mt-4">
+          <div v-if="previous_dues_details && previous_dues_details.length > 0 && previous_due > 0" class="mt-4">
             <h5 class="info-heading text-danger">Previous Dues (From Previous Sales)</h5>
             <div class="table-responsive">
               <table class="table table-hover table-sm table-bordered">

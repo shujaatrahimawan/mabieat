@@ -877,7 +877,7 @@ class SalesController extends BaseController
             ->get();
         
         foreach ($previous_sales as $prev_sale) {
-            $prev_due = $prev_sale->GrandTotal - $prev_sale->paid_amount;
+            $prev_due = round($prev_sale->GrandTotal - $prev_sale->paid_amount, 2);
             if ($prev_due > 0) {
                 $previous_due += $prev_due;
                 $previous_dues_details[] = [
@@ -891,8 +891,14 @@ class SalesController extends BaseController
             }
         }
         
-        $sale_details['previous_due'] = number_format($previous_due, 2, '.', '');
-        $sale_details['previous_dues_details'] = $previous_dues_details;
+        // Only include previous dues if there's actually a previous due > 0
+        if ($previous_due > 0) {
+            $sale_details['previous_due'] = number_format($previous_due, 2, '.', '');
+            $sale_details['previous_dues_details'] = $previous_dues_details;
+        } else {
+            $sale_details['previous_due'] = null;
+            $sale_details['previous_dues_details'] = [];
+        }
 
         if (SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->exists()) {
             $sellReturn = SaleReturn::where('sale_id', $id)->where('deleted_at', '=', null)->first();
