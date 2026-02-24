@@ -233,13 +233,19 @@
             </div>
           </div>
 
+
+
           <!-- ── NOTE ── -->
-          <hr v-show="sale.note" />
-          <b-row class="mt-4">
-            <b-col md="12">
-              <p>{{ $t('sale_note') }} : {{ sale.note }}</p>
-            </b-col>
-          </b-row>
+                  <div id="print_Invoice" dir="rtl" style="font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', sans-serif;">
+                    <hr v-show="sale.note" />
+                    <!-- <b-row class="mt-4">
+                      <b-col md="12">
+                        <p class="legal text-center" v-show="pos_settings.show_note">
+                          <strong>{{ pos_settings.note_customer }}</strong>
+                        </p>
+                      </b-col>
+                    </b-row> -->
+                  </div>
 
         </div><!-- end .invoice-print -->
       </div><!-- end #print_Invoice -->
@@ -248,7 +254,7 @@
   </div>
    
 </template>
-
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet"></link>
 <script>
 
 import { mapActions, mapGetters } from "vuex";
@@ -267,6 +273,7 @@ export default {
       sale: {},
       details: [],
       variants: [],
+      pos_settings:{},
       company: {},
       previous_due: 0,
       previous_dues_details: [],
@@ -298,6 +305,7 @@ export default {
           }
         })
         .then(response => {
+          console.log(response.data,"TESSS");
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
           link.href = url;
@@ -342,18 +350,47 @@ export default {
     },
 
     printPDF() {
-  const element = document.getElementById('print_Invoice');
+      const element = document.getElementById('print_Invoice');
 
-  const options = {
-    margin:       0.2,                  // page margin
-    filename:     'Invoice_' + this.sale.Ref + '.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true },
-    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-  };
+  // Remove any previous images (if PDF is generated multiple times)
+  const oldImg = element.querySelector('.urdu-image');
+  if (oldImg) oldImg.remove();
 
-  html2pdf().set(options).from(element).save();
-},
+  // Convert Urdu text to image
+  const text = this.pos_settings.note_customer; // your note text
+  const canvas = document.createElement('canvas');
+  canvas.width = 800;  // adjust width
+  canvas.height = 100; // adjust height according to text length
+  const ctx = canvas.getContext('2d');
+
+  // Background white
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Set Urdu font and RTL
+  ctx.font = '18px "Noto Nastaliq Urdu"';
+  ctx.direction = 'rtl';
+  ctx.textAlign = 'center'; // center the text
+  ctx.fillStyle = '#000';
+
+  // Draw the text in the horizontal center
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 5); // +5 to roughly vertical center
+
+  // Convert canvas to image
+  const img = new Image();
+  img.src = canvas.toDataURL();
+  img.className = 'urdu-image';
+  element.appendChild(img);
+
+  // Generate PDF
+  html2pdf().set({
+    margin: 0.2,
+    filename: 'Invoice_' + this.sale.Ref + '.pdf',
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+  }).from(element).save();
+  },
 
     Send_Email() {
       // Start the progress bar.
@@ -405,13 +442,34 @@ export default {
           this.makeToast("danger", this.$t("sms_config_invalid"), this.$t("Failed"));
         });
     },
+    Invoice_POS(id) {
+      // Start the progress bar.
+      NProgress.start();
+      NProgress.set(0.1);
+      axios
+        .get("sales_print_invoice/" + id)
+        .then(response => {
+          // this.invoice_pos = response.data;
+          // this.payments = response.data.payments;
+          this.pos_settings = response.data.pos_settings;
 
+
+        })
+        .catch(() => {
+          // Complete the animation of the  progress bar.
+          setTimeout(() => NProgress.done(), 500);
+        });
+    },
     //----------------------------------- Get Details Sale ------------------------------\\
     Get_Details() {
       let id = this.$route.params.id;
+
+      this.Invoice_POS(id);
+
       axios
         .get(`sales/${id}`)
         .then(response => {
+          
           this.sale = response.data.sale;
           this.details = response.data.details;
           this.company = response.data.company;
