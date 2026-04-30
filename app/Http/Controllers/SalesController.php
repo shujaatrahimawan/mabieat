@@ -90,7 +90,7 @@ class SalesController extends BaseController
             ->where('deleted_at', '=', null)
             ->where(function ($query) use ($view_records) {
                 if (!$view_records) {
-                    return $query->where('user_id', '=', Auth::user()->id);
+                    // return $query->where('user_id', '=', Auth::user()->id);
                 }
             });
         //Multiple Filter
@@ -117,11 +117,37 @@ class SalesController extends BaseController
             });
 
             //  filter by logged-in user's type 
-        $user_type = Auth::user()->type;
+        // $user_type = Auth::user()->type;
 
-        $Filtred = $Filtred->whereHas('user', function ($q) use ($user_type) {
-            $q->where('type', $user_type);
-        });
+        // dd(Auth::user()->toArray());
+
+        // $Filtred = $Filtred->whereHas('user', function ($q) use ($user_type) {
+        //     $q->where('type', $user_type);
+        // });
+
+                $user = Auth::user();
+            $user_type = $user->type;
+
+            // role checks
+            $isManager = $user->roles()->where('name', 'Manager')->exists();
+
+            $isSupervisor = $user->roles()
+                ->whereIn('name', ['Supervisor 1', 'Supervisor 2'])
+                ->exists();
+
+            if (!$isManager) {
+
+                if ($isSupervisor) {
+                    // Supervisor 1 & 2 → filter by type
+                    $Filtred = $Filtred->whereHas('user', function ($q) use ($user_type) {
+                        $q->where('type', $user_type);
+                    });
+
+                } else {
+                    // Normal user → only own sales
+                    $Filtred = $Filtred->where('user_id', $user->id);
+                }
+            }
 
         $totalRows = $Filtred->count();
         if($perPage == "-1"){
@@ -132,6 +158,8 @@ class SalesController extends BaseController
             ->limit($perPage)
             ->orderBy($order, $dir)
             ->get();
+
+            // dd($Sales->toArray());
 
         foreach ($Sales as $Sale) {
             

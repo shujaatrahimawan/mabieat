@@ -47,8 +47,8 @@
           </button>
         </b-col>
       </b-row>
-      <div class="invoice" id="print_Invoice">
-        <div class="invoice-print">
+      <div class="invoice" id="invoice_container">
+        <div class="invoice-print" id="print_Invoice">
 
           <!-- ── COMPANY TITLE ── -->
           <div class="inv-title-row">
@@ -70,8 +70,8 @@
 
             <!-- Customer Info -->
             <b-col lg="3" md="3" sm="12" class="mb-4">
-              <h5 class="info-heading">{{ $t('Customer_Info') }}</h5>
-              <div><b>{{ sale.client_name }}</b></div>
+              <h5 class="info-heading" style="font-size: 18px;">{{ $t('Customer_Info') }}</h5>
+              <div style="font-size: 18px;"><b>{{ sale.client_name }}</b></div>
               <div>{{ sale.client_email }}</div>
               <div>{{ sale.client_phone }}</div>
               <div>{{ sale.client_adr }}</div>
@@ -236,7 +236,7 @@
 
 
           <!-- ── NOTE ── -->
-                  <div id="print_Invoice" dir="rtl" style="font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', sans-serif;">
+                  <div dir="rtl" style="font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', sans-serif;">
                     <hr v-show="sale.note" />
                     <!-- <b-row class="mt-4">
                       <b-col md="12">
@@ -346,9 +346,68 @@ export default {
 
     //------------------------------ Print -------------------------\\
     print() {
-      this.$htmlToPaper('print_Invoice');
-    },
+  const element = document.getElementById('print_Invoice');
 
+  const oldImg = element.querySelector('.urdu-image');
+  if (oldImg) oldImg.remove();
+
+  const text = this.pos_settings.note_customer || '';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 800;
+  canvas.height = 200;
+  const ctx = canvas.getContext('2d');
+
+  // background
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  document.fonts.ready.then(() => {
+
+    ctx.font = '20px "Noto Nastaliq Urdu"';
+    ctx.direction = 'rtl';
+    ctx.fillStyle = '#000';
+
+    ctx.textAlign = 'center';      // ✅ centered like the PDF
+    ctx.textBaseline = 'middle';
+
+    const x = canvas.width / 2;   // ✅ horizontal center
+    const y = canvas.height / 2;
+
+    // draw text
+    ctx.fillText(text, x, y);
+
+    const img = new Image();
+    img.src = canvas.toDataURL();
+    img.className = 'urdu-image';
+
+    img.onload = () => {
+      element.appendChild(img);
+
+      html2pdf().set({
+        margin: 0.2,
+        filename: 'Invoice_' + this.sale.Ref + '.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      }).from(element).output('blob').then(pdfBlob => {
+
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        const printWindow = window.open(pdfUrl, '_blank');
+
+        if (printWindow) {
+          printWindow.onload = () => {
+            setTimeout(() => {
+              printWindow.focus();
+              printWindow.print();
+            }, 500);
+          };
+        }
+
+      });
+    };
+  });
+},
     printPDF() {
       const element = document.getElementById('print_Invoice');
 
