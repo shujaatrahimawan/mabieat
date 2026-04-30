@@ -115,7 +115,7 @@
             <b-col md="12">
               <h5 class="info-heading">{{ $t('Order_Summary') }}</h5>
               <div class="table-responsive">
-                <table class="table table-hover table-md">
+                <table class="table table-bordered table-hover table-md">
                   <thead class="bg-gray-300">
                     <tr>
                       <th scope="col">Sr no.</th> <!-- Serial Number -->
