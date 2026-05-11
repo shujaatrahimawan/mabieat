@@ -138,7 +138,7 @@
                 <div :class="class_type_page" v-for ="(k, i) in total_a4" :key="i">
                   <div class="barcode-item" :class="class_sheet"  v-for="(sheet, index) in sheets" :key="index" >
                     <div class="head_barcode" style=" padding-left: 0px;font-weight: bold; ">
-                      <span class="barcode-name">{{product.name}}</span>
+                      <!-- <span class="barcode-name">{{product.name}}</span> -->
                       <span class="barcode-price">{{currentUser.currency}} {{product.Net_price}}</span>
                     </div>
                     <barcode
@@ -156,7 +156,7 @@
                 <div :class="class_type_page"  v-if="rest > 0">
                   <div class="barcode-item" :class="class_sheet"  v-for="(sheet, index) in rest" :key="index" >
                     <div class="head_barcode" style=" padding-left: 0px;font-weight: bold; ">
-                      <span class="barcode-name">{{product.name}}</span>
+                      <!-- <span class="barcode-name">{{product.name}}</span> -->
                       <span class="barcode-price">{{currentUser.currency}} {{product.Net_price}}</span>
                     </div>
                     <barcode

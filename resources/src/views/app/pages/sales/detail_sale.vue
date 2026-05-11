@@ -66,7 +66,7 @@
           <hr />
 
           <!-- ── 3 COLUMN INFO ROW ── -->
-          <b-row class="mt-5">
+          <b-row class="mt-2">
 
             <!-- Customer Info -->
             <b-col lg="3" md="3" sm="12" class="mb-4">
@@ -146,10 +146,10 @@
                       </td>
                       <td>{{ formatNumber(detail.quantity, 2) }} {{ detail.unit_sale }}</td>
 
-                      <td>{{ currentUser.currency }} {{ formatNumber(detail.price, 2) }}</td>
+                      <td> {{ formatNumber(detail.price, 2) }}</td>
                       
                       <td> {{ formatNumber(detail.discount_percent,0) }}%</td>
-                      <td>{{ currentUser.currency }} {{ formatNumber(detail.Net_price, 3) }}</td>
+                      <td> {{ formatNumber(detail.Net_price, 3) }}</td>
 
 
 
@@ -157,7 +157,7 @@
                  
 
                       <!-- <td>{{ currentUser.currency }} {{ formatNumber(detail.taxe, 2) }}</td> -->
-                      <td>{{ currentUser.currency }} {{ detail.total.toFixed(2) }}</td>
+                      <td>{{ detail.total.toFixed(2) }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -693,5 +693,78 @@ export default {
 ── */
 @media (max-width: 680px) {
   .invoice-print { padding: 20px 16px; }
+}
+
+/* =========================
+   SAFE PDF LAYOUT FIX
+========================= */
+
+#print_Invoice {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* REMOVE BOOTSTRAP FLEX IN PDF */
+#print_Invoice .row,
+#print_Invoice .b-row {
+  /* display: block !important; */
+}
+
+/* FIX COLUMNS */
+#print_Invoice [class*="col-"] {
+  display: inline-block !important;
+  vertical-align: top;
+}
+
+/* COLUMN WIDTHS */
+.col-md-12 { width: 100% !important; }
+.col-md-9  { width: 75% !important; }
+.col-md-6  { width: 50% !important; }
+.col-md-4  { width: 33.33% !important; }
+.col-md-3  { width: 25% !important; }
+.col-md-2  { width: 16.66% !important; }
+
+/* =========================
+   TABLE FIX (MULTI PAGE)
+========================= */
+
+#print_Invoice table {
+  width: 100% !important;
+  border-collapse: collapse;
+}
+
+#print_Invoice thead {
+  display: table-header-group;
+}
+
+#print_Invoice tfoot {
+  display: table-footer-group;
+}
+
+#print_Invoice tr {
+  page-break-inside: avoid;
+  page-break-after: auto;
+}
+
+/* =========================
+   NO BREAK CLASS
+========================= */
+
+.no-break {
+  page-break-inside: avoid !important;
+}
+
+/* =========================
+   SPACING FIX
+========================= */
+
+#print_Invoice td,
+#print_Invoice th {
+  padding: 5px !important;
+  font-size: 12px !important;
+}
+
+.invoice-print {
+  padding: 20px !important;
 }
 </style>
