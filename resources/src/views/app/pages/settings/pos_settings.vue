@@ -12,23 +12,45 @@
               <b-card-body>
                 <b-row>
 
-                   <!-- Note to customer  -->
+                   <!-- Retail Note to customer  -->
                   <b-col lg="12" md="12" sm="12">
                     <validation-provider
-                      name="note"
+                      name="note_retail"
                       :rules="{ required: true}"
                       v-slot="validationContext"
                     >
-                      <b-form-group :label="$t('Note_to_customer') + ' ' + '*'">
+                      <b-form-group :label="'Retail Note to Customer' + ' ' + '*'">
                         <b-form-input
                           :state="getValidationState(validationContext)"
-                          aria-describedby="note-feedback"
+                          aria-describedby="note_retail-feedback"
                           label="Note to customer"
-                          :placeholder="$t('Note_to_customer')"
-                          v-model="pos_settings.note_customer"
+                          :placeholder="$t('Retail_Note_to_customer')"
+                          v-model="pos_settings.note_retail"
                         ></b-form-input>
                         <b-form-invalid-feedback
-                          id="note-feedback"
+                          id="note_retail-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+                  
+                   <!-- Wholesale Note to customer  -->
+                  <b-col lg="12" md="12" sm="12">
+                    <validation-provider
+                      name="note_wholesale"
+                      :rules="{ required: true}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="'Wholesale Note to Customer' + ' ' + '*'">
+                        <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="note_wholesale-feedback"
+                          label="Note to customer"
+                          :placeholder="$t('Wholesale_Note_to_customer')"
+                          v-model="pos_settings.note_wholesale"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="note_wholesale-feedback"
                         >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                       </b-form-group>
                     </validation-provider>
@@ -147,7 +169,8 @@ export default {
       isLoading: true,
      
       pos_settings:{
-        note_customer:"",
+        note_retail:"",
+        note_wholesale:"",
         show_note:"",
         show_barcode:"",
         show_discount:"",
@@ -200,16 +223,17 @@ export default {
       NProgress.set(0.1);
       axios
         .put("pos_settings/" + this.pos_settings.id, {
-          note_customer: this.pos_settings.note_customer,
+          note_retail: this.pos_settings.note_retail,
+          note_wholesale: this.pos_settings.note_wholesale,
           show_note: this.pos_settings.show_note,
           show_barcode: this.pos_settings.show_barcode,
           show_discount: this.pos_settings.show_discount,
           show_phone: this.pos_settings.show_phone,
           show_email: this.pos_settings.show_email,
           show_address: this.pos_settings.show_address,
-          show_customer: this.pos_settings.show_customer,  
-          show_Warehouse: this.pos_settings.show_Warehouse,  
-          is_printable: this.pos_settings.is_printable,      
+          show_customer: this.pos_settings.show_customer,
+          show_Warehouse: this.pos_settings.show_Warehouse,
+          is_printable: this.pos_settings.is_printable,
         })
         .then(response => {
           Fire.$emit("Event_Pos_Settings");

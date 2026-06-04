@@ -93,6 +93,8 @@ class ClientController extends BaseController
             $item['country'] = $client->country;
             $item['city'] = $client->city;
             $item['adresse'] = $client->adresse;
+            $userType = $request->user('api')->type;
+            $item['note'] = ($userType == 'Retail') ? $client->note_retail : $client->note_wholesale;
             $data[] = $item;
         }
 
@@ -116,7 +118,15 @@ class ClientController extends BaseController
             ]
         );
 
-        Client::create([
+        $userType = $request->user('api')->type;
+        $noteData = [];
+        if ($userType == 'Retail') {
+            $noteData['note_retail'] = $request['note'];
+        } elseif ($userType == 'Wholesale') {
+            $noteData['note_wholesale'] = $request['note'];
+        }
+        
+        Client::create(array_merge([
             'name' => $request['name'],
             'code' => $this->getNumberOrder(),
             'adresse' => $request['adresse'],
@@ -125,7 +135,7 @@ class ClientController extends BaseController
             'country' => $request['country'],
             'city' => $request['city'],
             'tax_number' => $request['tax_number'],
-        ]);
+        ], $noteData));
         return response()->json(['success' => true]);
     }
 
@@ -147,7 +157,15 @@ class ClientController extends BaseController
             ]
         );
 
-        Client::whereId($id)->update([
+        $userType = $request->user('api')->type;
+        $noteData = [];
+        if ($userType == 'Retail') {
+            $noteData['note_retail'] = $request['note'];
+        } elseif ($userType == 'Wholesale') {
+            $noteData['note_wholesale'] = $request['note'];
+        }
+        
+        Client::whereId($id)->update(array_merge([
             'name' => $request['name'],
             'adresse' => $request['adresse'],
             'phone' => $request['phone'],
@@ -155,7 +173,7 @@ class ClientController extends BaseController
             'country' => $request['country'],
             'city' => $request['city'],
             'tax_number' => $request['tax_number'],
-        ]);
+        ], $noteData));
         return response()->json(['success' => true]);
 
     }
@@ -251,7 +269,15 @@ class ClientController extends BaseController
                 $validator = Validator::make($input, $rules);
                 if (!$validator->fails()) {
                     
-                    Client::create([
+                    $userType = $request->user('api')->type;
+                    $noteData = [];
+                    if ($userType == 'Retail') {
+                        $noteData['note_retail'] = $value['note'] == '' ? null : $value['note'];
+                    } elseif ($userType == 'Wholesale') {
+                        $noteData['note_wholesale'] = $value['note'] == '' ? null : $value['note'];
+                    }
+                    
+                    Client::create(array_merge([
                         'name' => $value['name'],
                         'code' => $this->getNumberOrder(),
                         'adresse' => $value['adresse'] == '' ? null : $value['adresse'],
@@ -260,7 +286,7 @@ class ClientController extends BaseController
                         'country' => $value['country'] == '' ? null : $value['country'],
                         'city' => $value['city'] == '' ? null : $value['city'],
                         'tax_number' => $value['tax_number'] == '' ? null : $value['tax_number'],
-                    ]);
+                    ], $noteData));
 
                 }
                

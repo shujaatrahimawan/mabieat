@@ -108,6 +108,7 @@
                         {label: '12 per sheet (a4) (2.5 * 2.834)', value: 'style12'},
                         {label: '10 per sheet (4 * 2)', value: 'style10'},
                         { label: 'BlackCopper BC-LP1300 (90mm x 19mm)', value: 'blackcopper_lp1300' },
+                        { label: 'BlackCopper New (90mm x 19mm)', value: 'blackcopper_new' },
                       ]"
               ></v-select>
             </b-form-group>
@@ -291,8 +292,12 @@ else if (value == 'blackcopper_lp1300') {
  this.sheets = 24;
         this.class_sheet = 'style14';
         this.class_type_page = 'barcode_non_a4';
+}else if (value == 'blackcopper_new') {
+ this.sheets = 24;
+        this.class_sheet = 'style14';
+        this.class_type_page = 'barcode_non_a4';
 }
-     
+      
       this.Per_Page();
     },
 

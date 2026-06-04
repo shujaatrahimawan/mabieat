@@ -121,17 +121,18 @@ class SettingsController extends Controller
 
      //-------------- Get Pos Settings ---------------\\
 
-     public function get_pos_Settings(Request $request)
-     {
-         $this->authorizeForUser($request->user('api'), 'pos_settings', Setting::class);
- 
-         $PosSetting = PosSetting::where('deleted_at', '=', null)->first();
-
-         return response()->json([
-             'pos_settings' => $PosSetting
-            ], 200);
-    
-    }
+      public function get_pos_Settings(Request $request)
+      {
+          $this->authorizeForUser($request->user('api'), 'pos_settings', Setting::class);
+  
+          $PosSetting = PosSetting::where('deleted_at', '=', null)->first();
+          $Setting = Setting::where('deleted_at', '=', null)->first();
+  
+          return response()->json([
+              'pos_settings' => $PosSetting,
+              'setting' => $Setting
+             ], 200);
+      }
 
 
     //-------------- Update Pos settings ---------------\\
@@ -141,7 +142,8 @@ class SettingsController extends Controller
         $this->authorizeForUser($request->user('api'), 'pos_settings', Setting::class);
 
         request()->validate([
-            'note_customer' => 'required',
+            'note_retail' => 'required',
+            'note_wholesale' => 'required',
         ]);
 
         if($request['is_printable'] == '1' || $request['is_printable'] == 'true'){
@@ -151,7 +153,8 @@ class SettingsController extends Controller
         }
 
         PosSetting::whereId($id)->update([
-            'note_customer'  => $request['note_customer'],
+            'note_retail'  => $request['note_retail'],
+            'note_wholesale'  => $request['note_wholesale'],
             'show_note'      => $request['show_note'],
             'show_barcode'   => $request['show_barcode'],
             'show_discount'  => $request['show_discount'],

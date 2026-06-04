@@ -274,6 +274,7 @@ export default {
       details: [],
       variants: [],
       pos_settings:{},
+      note: "",
       company: {},
       previous_due: 0,
       previous_dues_details: [],
@@ -351,7 +352,7 @@ export default {
   const oldImg = element.querySelector('.urdu-image');
   if (oldImg) oldImg.remove();
 
-  const text = this.pos_settings.note_customer || '';
+  const text = this.note || '';
 
   const canvas = document.createElement('canvas');
   canvas.width = 800;
@@ -416,7 +417,8 @@ export default {
   if (oldImg) oldImg.remove();
 
   // Convert Urdu text to image
-  const text = this.pos_settings.note_customer; // your note text
+  const text = this.note; // your note text
+  console.log(this.pos_settings,"NOTE");
   const canvas = document.createElement('canvas');
   canvas.width = 800;  // adjust width
   canvas.height = 100; // adjust height according to text length
@@ -508,9 +510,11 @@ export default {
       axios
         .get("sales_print_invoice/" + id)
         .then(response => {
+          console.log(response.data,"POS SETTINGS");
           // this.invoice_pos = response.data;
           // this.payments = response.data.payments;
           this.pos_settings = response.data.pos_settings;
+          this.note = response.data.sale.note;          ;
 
 
         })

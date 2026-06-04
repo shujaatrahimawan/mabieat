@@ -874,7 +874,7 @@
 
               <div id="legalcopy" class="ml-2">
                 <p class="legal" v-show="pos_settings.show_note">
-                  <strong>{{pos_settings.note_customer}}</strong>
+                  <strong>{{this.note}}</strong>
                 </p>
                 <div id="bar" v-show="pos_settings.show_barcode">
                   <barcode
@@ -1373,6 +1373,7 @@ export default {
       },
       category_id: "",
       brand_id: "",
+      note: "",
       product: {
         id: "",
         code: "",
@@ -1984,8 +1985,10 @@ export default {
       axios
         .get("sales_print_invoice/" + id)
         .then(response => {
+          console.log('Invoice Response:', response.data);
           this.invoice_pos = response.data;
           this.payments = response.data.payments;
+          this.note = response.data.sale.note;
           this.pos_settings = response.data.pos_settings;
           setTimeout(() => {
             // Complete the animation of the  progress bar.

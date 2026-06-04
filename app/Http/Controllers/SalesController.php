@@ -1039,6 +1039,19 @@ class SalesController extends BaseController
         $item['warehouse_name'] = $sale['warehouse']->name;
         $item['GrandTotal'] = number_format($sale->GrandTotal, 2, '.', '');
         $item['paid_amount'] = number_format($sale->paid_amount, 2, '.', '');
+        
+        // Add note based on user type
+        $userType = $request->user('api')->type;
+
+        $settings = PosSetting::where('deleted_at', '=', null)->first();
+        // dd($settings->toArray());
+        if ($userType == 'Retail' && $settings) {
+            $item['note'] = $settings->note_retail;
+        } elseif ($userType == 'Wholesale' && $settings) {
+            $item['note'] = $settings->note_wholesale;
+        } else {
+            $item['note'] = '';
+        }
 
         foreach ($sale['details'] as $detail) {
 
@@ -1175,6 +1188,17 @@ class SalesController extends BaseController
         $sale['paid_amount'] = number_format($sale_data->paid_amount, 2, '.', '');
         $sale['due'] = number_format($sale['GrandTotal'] - $sale['paid_amount'], 2, '.', '');
         $sale['payment_status'] = $sale_data->payment_statut;
+
+        // Add note based on user type
+        $userType = $request->user('api')->type;
+        $settings = Setting::where('deleted_at', '=', null)->first();
+        if ($userType == 'Retail' && $settings) {
+            $sale['note'] = $settings->note_retail;
+        } elseif ($userType == 'Wholesale' && $settings) {
+            $sale['note'] = $settings->note_wholesale;
+        } else {
+            $sale['note'] = '';
+        }
 
         $detail_id = 0;
         foreach ($sale_data['details'] as $detail) {
