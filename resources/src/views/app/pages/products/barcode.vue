@@ -152,6 +152,7 @@
                       height= "25"
                       width= "1"
                     ></barcode>
+                    
                     </div>
                 </div>
                 <div :class="class_type_page"  v-if="rest > 0">
@@ -294,8 +295,8 @@ else if (value == 'blackcopper_lp1300') {
         this.class_type_page = 'barcode_non_a4';
 }else if (value == 'blackcopper_new') {
  this.sheets = 24;
-        this.class_sheet = 'style14';
-        this.class_type_page = 'barcode_non_a4';
+    this.class_sheet = 'blackcopper_new';
+    this.class_type_page = 'barcode_non_a4'
 }
       
       this.Per_Page();

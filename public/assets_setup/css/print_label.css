@@ -218,4 +218,36 @@
   justify-content: start;
 }
 
-	
+/* BlackCopper New - 2 labels per row */
+.barcode_non_a4 {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.barcode_non_a4 .blackcopper_new {
+    width: 50%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 2mm;
+}
+
+@media print {
+
+    .barcode_non_a4 {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .barcode_non_a4 .blackcopper_new {
+        width: 50% !important;
+        max-width: 50% !important;
+        flex: 0 0 50% !important;
+
+        height: 19mm;
+        margin: 0;
+        padding: 2mm;
+
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+}
