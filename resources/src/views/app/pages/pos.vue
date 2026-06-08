@@ -818,6 +818,27 @@
                     <td style="text-align:right;" class="total">{{invoice_pos.symbol}} {{formatNumber(invoice_pos.sale.shipping ,2)}}</td>
                   </tr>
 
+                     <!-- ================= SUBTOTAL (BEFORE DISCOUNT) ================= -->
+                     <tr>
+  <td colspan="3" class="total">Subtotal</td>
+  <td style="text-align:right;" class="total">
+    {{ invoice_pos.symbol }}
+    {{
+      formatNumber(
+        Number(invoice_pos.sale.GrandTotal) + Number(invoice_pos.sale.discount),
+        2
+      )
+    }}
+  </td>
+</tr>
+
+                  <tr v-show="invoice_pos.sale.discount > 0">
+                    <td colspan="3" class="total">Discount</td>
+                    <td style="text-align:right;" class="total">
+                      {{invoice_pos.symbol}} {{formatNumber(invoice_pos.sale.discount, 2)}}
+                    </td>
+                  </tr>
+
                   <tr style="margin-top:10px">
                     <td colspan="3" class="total">{{$t('Total')}}</td>
                     <td
@@ -825,6 +846,9 @@
                       class="total"
                     >{{invoice_pos.symbol}} {{formatNumber(invoice_pos.sale.GrandTotal ,2)}}</td>
                   </tr>
+
+                
+
 
                   <tr v-show="invoice_pos.sale.paid_amount < invoice_pos.sale.GrandTotal">
                     <td colspan="3" class="total">{{$t('Paid')}}</td>
@@ -844,33 +868,42 @@
                 </tbody>
               </table>
 
-              <table
-                class="change mt-3"
-                style=" font-size: 10px;"
-                v-show="invoice_pos.sale.paid_amount > 0"
-              >
-                <thead>
-                  <tr style="background: #eee; ">
-                    <th style="text-align: left;" colspan="1">{{$t('PayeBy')}}:</th>
-                    <th style="text-align: center;" colspan="2">{{$t('Amount')}}:</th>
-                    <th style="text-align: right;" colspan="1">{{$t('Change')}}:</th>
-                  </tr>
-                </thead>
+              <table class="change mt-3" style="font-size: 10px; width: 100%;">
+  <thead>
+    <tr style="background: #eee;">
+      <th style="text-align: left;" colspan="1">{{$t('PayeBy')}}</th>
+      <th style="text-align: center;" colspan="1">Received</th>
+      <!-- <th style="text-align: center;" colspan="1">{{$t('Amount')}}</th> -->
+      <th style="text-align: right;" colspan="1">{{$t('Change')}}</th>
+    </tr>
+  </thead>
 
-                <tbody>
-                  <tr v-for="payment_pos in payments">
-                    <td style="text-align: left;" colspan="1">{{payment_pos.Reglement}}</td>
-                    <td
-                      style="text-align: center;"
-                      colspan="2"
-                    >{{formatNumber(payment_pos.montant ,2)}}</td>
-                    <td
-                      style="text-align: right;"
-                      colspan="1"
-                    >{{formatNumber(payment_pos.change ,2)}}</td>
-                  </tr>
-                </tbody>
-              </table>
+  <tbody>
+    <tr v-for="payment_pos in payments" :key="payment_pos.id">
+
+      <!-- Payment method -->
+      <td style="text-align: left;">
+        {{payment_pos.Reglement}}
+      </td>
+
+      <!-- Received Amount (same for all rows, so show once properly aligned) -->
+      <td style="text-align: center;">
+        {{invoice_pos.symbol}} {{formatNumber(invoice_pos.sale.received_amount, 2)}}
+      </td>
+
+      <!-- Paid amount -->
+      <!-- <td style="text-align: center;">
+        {{invoice_pos.symbol}} {{formatNumber(payment_pos.montant, 2)}}
+      </td> -->
+
+      <!-- Change -->
+      <td style="text-align: right;">
+        {{invoice_pos.symbol}} {{formatNumber(payment_pos.change, 2)}}
+      </td>
+
+    </tr>
+  </tbody>
+</table>
 
               <div id="legalcopy" class="ml-2">
                 <p class="legal" v-show="pos_settings.show_note">
@@ -1260,6 +1293,7 @@ export default {
   },
   data() {
     return {
+      invoice_received_amount: 0,
       langs: [
         "en",
         "fr",
@@ -1334,6 +1368,7 @@ export default {
         sale: {
           Ref: "",
           client_name: "",
+          received_amount:"",
           discount: "",
           taxe: "",
           date: "",
@@ -1679,6 +1714,8 @@ export default {
               this.payment.amount = 0;
                NProgress.done();
             }else{
+              this.invoice_received_amount = this.payment.received_amount;
+
               this.CreatePOS();
             }
        
@@ -1987,6 +2024,7 @@ export default {
         .then(response => {
           console.log('Invoice Response:', response.data);
           this.invoice_pos = response.data;
+          this.invoice_pos.sale.received_amount = this.invoice_received_amount;
           this.payments = response.data.payments;
           this.note = response.data.sale.note;
           this.pos_settings = response.data.pos_settings;
