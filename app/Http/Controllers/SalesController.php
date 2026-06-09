@@ -129,7 +129,9 @@ class SalesController extends BaseController
             $user_type = $user->type;
 
             // role checks
-            $isManager = $user->roles()->where('name', 'Manager')->exists();
+            $isManager = $user->roles()
+                ->whereIn('name', ['Manager', 'Owner'])
+                ->exists();
 
             $isSupervisor = $user->roles()
                 ->whereIn('name', ['Supervisor 1', 'Supervisor 2'])
