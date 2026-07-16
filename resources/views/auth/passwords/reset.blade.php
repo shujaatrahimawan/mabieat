@@ -32,7 +32,7 @@
         <reset-component token="{{$token}}"></reset-component>
       </div>
 
-      <script src="/js/login.min.js"></script>
+      <script src="@mixsafe('js/login.min.js')"></script>
   </body>
 </html>
 

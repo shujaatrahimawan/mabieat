@@ -4,6 +4,22 @@ import App from "./App.vue";
 import router from "./router";
 import Auth from './auth/index.js';
 window.auth = new Auth();
+
+// Reload automatically if a new version of the app is deployed while an old tab is open.
+// Prevents blank pages caused by ChunkLoadError / missing dynamically imported modules.
+window.addEventListener("unhandledrejection", (event) => {
+    if (
+        event.reason &&
+        (
+            event.reason.name === "ChunkLoadError" ||
+            event.reason.message?.includes("Loading chunk") ||
+            event.reason.message?.includes("Failed to fetch dynamically imported module")
+        )
+    ) {
+        alert("A new version of the application is available. The page will now reload.");
+        window.location.reload();
+    }
+});
 import { ValidationObserver, ValidationProvider, extend, localize } from 'vee-validate';
 import * as rules from "vee-validate/dist/rules";
 
