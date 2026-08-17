@@ -26,7 +26,11 @@ class Role extends Model
      */
     public function hasPermission(Permission $permission, User $user)
     {
-        return $this->hasRole($permission->roles);
+        $permissionRoles = $permission->roles;
+        if ($permissionRoles instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
+            $permissionRoles = $permissionRoles->get();
+        }
+        return $this->inRole($permissionRoles);
     }
     /**
      * Determine if the role has the given permission.
@@ -36,9 +40,14 @@ class Role extends Model
      */
     public function inRole($permission)
     {
-        if (is_string($permission)) {
-            return $this->permissions->contains('name', $permission);
+        $rolePermissions = $this->permissions;
+        if ($rolePermissions instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
+            $rolePermissions = $rolePermissions->get();
         }
-        return !!$permission->intersect($this->permissions)->count();
+
+        if (is_string($permission)) {
+            return $rolePermissions->contains('name', $permission);
+        }
+        return !!$permission->intersect($rolePermissions)->count();
     }
 }

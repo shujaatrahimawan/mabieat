@@ -21,9 +21,14 @@ class Permission extends Model
      */
     public function inRole($role)
     {
-        if (is_string($role)) {
-            return $this->roles->contains('name', $role);
+        $permissionRoles = $this->roles;
+        if ($permissionRoles instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
+            $permissionRoles = $permissionRoles->get();
         }
-        return !!$role->intersect($this->roles)->count();
+
+        if (is_string($role)) {
+            return $permissionRoles->contains('name', $role);
+        }
+        return !!$role->intersect($permissionRoles)->count();
     }
 }

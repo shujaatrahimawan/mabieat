@@ -58,10 +58,20 @@ class User extends Authenticatable
 
     public function hasRole($role)
     {
-        if (is_string($role)) {
-            return $this->roles->contains('name', $role);
+        // Resolve the user's roles as a real Collection. The `roles` property may
+        // be either an already-loaded Collection or a BelongsToMany relation
+        // instance depending on whether it was touched earlier in the request.
+        // Calling ->intersect() on the relation object (instead of a Collection)
+        // is what caused intermittent 403 "Authorization denied" responses.
+        $userRoles = $this->roles;
+        if ($userRoles instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
+            $userRoles = $userRoles->get();
         }
-        return !!$role->intersect($this->roles)->count();
+
+        if (is_string($role)) {
+            return $userRoles->contains('name', $role);
+        }
+        return !!$role->intersect($userRoles)->count();
     }
 
     public function assignedWarehouses()
